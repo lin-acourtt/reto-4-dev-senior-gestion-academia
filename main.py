@@ -1,8 +1,9 @@
-from view.menu_estudiantes import menu_estudiantes
-from view.menu_profesores import menu_profesores
-from view.menu_cursos import menu_cursos
-from view.menu_horarios import menu_horarios
-from view.menu_matriculas import menu_matriculas
+from view.view_Tkinter.menu_principal import MenuPrincipal
+# from view.menu_estudiantes import menu_estudiantes
+# from view.menu_profesores import menu_profesores
+# from view.menu_cursos import menu_cursos
+# from view.menu_horarios import menu_horarios
+# from view.menu_matriculas import menu_matriculas
 from config.database import Database
 
 if __name__ == "__main__":
@@ -12,7 +13,8 @@ if __name__ == "__main__":
         # menu_profesores(db)
         # menu_cursos(db)
         # menu_horarios(db)
-        menu_matriculas(db)
+        # menu_matriculas(db)
+        MenuPrincipal(db)
     finally:
         db.close()
 
