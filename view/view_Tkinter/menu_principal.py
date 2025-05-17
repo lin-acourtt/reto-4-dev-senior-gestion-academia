@@ -1,18 +1,20 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os
-# from view.viewTkinter.viewEstudiante.menuEstudiante import MenuEstudiante
-# from view.viewTkinter.viewDocenteFull.menuDocenteFull import MenuDocenteFull
+# from view.view_Tkinter.viewEstudiante.menuEstudiante import MenuEstudiante
+# from view.view_Tkinter.viewDocenteFull.menuDocenteFull import MenuDocenteFull
 from controllers.estudiante_controller import EstudianteController
 from controllers.profesor_controller import ProfesorController
 from controllers.curso_controller import CursoController
+from controllers.horario_controller import HorarioController
+from controllers.matricula_controller import MatriculaController
 
 #Crear la clase principal de la ventana la cual se encargar de recibir a las demas ventanas
 class MenuPrincipal:
     def __init__(self, db=None, tema_actual="System"):
         self.db = db    
         self.root = ctk.CTk()
-        self.root.title("Sistema de Gestión Académica")
+        self.root.title("Sistema de Gestión Académica 'Lindsey - Santiago' ")
         
         # Configurar el tema de la ventana
         ctk.set_appearance_mode(tema_actual)
@@ -46,19 +48,35 @@ class MenuPrincipal:
         # Título con estilo moderno
         self.titulo = ctk.CTkLabel(
             self.frame_superior, 
-            text="Sistema de Gestión Académica",
+            text="Sistema de Gestión Académica", 
             font=("Helvetica", 24, "bold")
         )
         self.titulo.pack(side="left", padx=20)
+        
+        # Frame para los botones de la derecha
+        frame_botones = ctk.CTkFrame(self.frame_superior)
+        frame_botones.pack(side="right", padx=10)
 
+        
         # Botón de tema con icono
         self.btn_cambiar_tema = ctk.CTkButton(
-            self.frame_superior,
+            frame_botones,
             text="🌓 Cambiar Tema",
             command=self.cambiar_tema,
             width=120
         )
-        self.btn_cambiar_tema.pack(side="right", padx=20)
+        self.btn_cambiar_tema.pack(side="left", padx=5)
+        
+        # Botón salir del programa
+        self.btn_salir = ctk.CTkButton(
+            frame_botones,
+            text="🚪 Salir",
+            command=self.salir_programa,
+            width=120,
+            fg_color="#FF5555",  # Color rojo para el botón de salir
+            hover_color="#FF3333"  # Color rojo más oscuro al pasar el mouse
+        )
+        self.btn_salir.pack(side="left", padx=5)
 
         # Frame para el contenido principal (grid de 2x3)
         self.frame_contenido = ctk.CTkFrame(self.frame_principal)
@@ -71,7 +89,7 @@ class MenuPrincipal:
             ("📚 Cursos", "Gestionar cursos", self.abrir_ventana_cursos),
             ("⏰ Horarios", "Gestionar horarios", self.abrir_ventana_horarios),
             ("📝 Matrículas", "Gestionar matrículas", self.abrir_ventana_matriculas),
-            ("📊 Estadísticas", "Ver estadísticas", self.mostrar_estadisticas)
+            # ("📊 Estadísticas", "Ver estadísticas", self.mostrar_estadisticas)
         ]
 
         # Crear grid de botones
@@ -104,116 +122,116 @@ class MenuPrincipal:
         self.frame_contenido.grid_rowconfigure(1, weight=1)
 
         # Cargar estadísticas iniciales
-        self.cargar_estadisticas()
+        # self.cargar_estadisticas()
 
-    def cargar_estadisticas(self):
-        try:
-            # Crear controladores
-            estudiante_controller = EstudianteController(self.db)
-            docente_controller = ProfesorController(self.db)
-            curso_controller = CursoController(self.db)
+    # def cargar_estadisticas(self):
+    #     try:
+    #         # Crear controladores
+    #         estudiante_controller = EstudianteController(self.db)
+    #         docente_controller = ProfesorController(self.db)
+    #         curso_controller = CursoController(self.db)
 
-            # Obtener estadísticas
-            total_estudiantes = len(estudiante_controller.listar_estudiantes())
-            total_docentes = len(docente_controller.listar_docentes())
-            total_cursos = len(curso_controller.listar_cursos())
+    #         # Obtener estadísticas
+    #         total_estudiantes = len(estudiante_controller.listar_estudiantes())
+    #         total_docentes = len(docente_controller.listar_docentes())
+    #         total_cursos = len(curso_controller.listar_cursos())
 
-            # Actualizar etiquetas de estadísticas si existen
-            if hasattr(self, 'label_estadisticas'):
-                self.label_estadisticas.configure(
-                    text=f"Estadísticas:\n"
-                         f"Estudiantes: {total_estudiantes}\n"
-                         f"Docentes: {total_docentes}\n"
-                         f"Cursos: {total_cursos}"
-                )
-        except Exception as e:
-            print(f"Error al cargar estadísticas: {e}")
+    #         # Actualizar etiquetas de estadísticas si existen
+    #         if hasattr(self, 'label_estadisticas'):
+    #             self.label_estadisticas.configure(
+    #                 text=f"Estadísticas:\n"
+    #                      f"Estudiantes: {total_estudiantes}\n"
+    #                      f"Docentes: {total_docentes}\n"
+    #                      f"Cursos: {total_cursos}"
+    #             )
+    #     except Exception as e:
+    #         print(f"Error al cargar estadísticas: {e}")
 
-    def mostrar_estadisticas(self):
-        # Crear ventana de estadísticas
-        ventana_stats = ctk.CTkToplevel(self.root)
-        ventana_stats.title("Estadísticas del Sistema")
-        ventana_stats.geometry("400x300")
-        ventana_stats.resizable(False, False)
+    # def mostrar_estadisticas(self):
+    #     # Crear ventana de estadísticas
+    #     ventana_stats = ctk.CTkToplevel(self.root)
+    #     ventana_stats.title("Estadísticas del Sistema")
+    #     ventana_stats.geometry("400x300")
+    #     ventana_stats.resizable(False, False)
         
-        # Configurar el tema
-        ctk.set_appearance_mode(self.tema_actual)
+    #     # Configurar el tema
+    #     ctk.set_appearance_mode(self.tema_actual)
         
-        # Frame para las estadísticas
-        frame_stats = ctk.CTkFrame(ventana_stats)
-        frame_stats.pack(fill="both", expand=True, padx=20, pady=20)
+    #     # Frame para las estadísticas
+    #     frame_stats = ctk.CTkFrame(ventana_stats)
+    #     frame_stats.pack(fill="both", expand=True, padx=20, pady=20)
         
-        # Título
-        titulo = ctk.CTkLabel(
-            frame_stats,
-            text="Estadísticas del Sistema",
-            font=("Helvetica", 20, "bold")
-        )
-        titulo.pack(pady=10)
+    #     # Título
+    #     titulo = ctk.CTkLabel(
+    #         frame_stats,
+    #         text="Estadísticas del Sistema",
+    #         font=("Helvetica", 20, "bold")
+    #     )
+    #     titulo.pack(pady=10)
         
-        # Cargar y mostrar estadísticas
-        try:
-            estudiante_controller = EstudianteController(self.db)
-            docente_controller = ProfesorController(self.db)
-            curso_controller = CursoController(self.db)
+    #     # Cargar y mostrar estadísticas
+    #     try:
+    #         estudiante_controller = EstudianteController(self.db)
+    #         docente_controller = ProfesorController(self.db)
+    #         curso_controller = CursoController(self.db)
             
-            total_estudiantes = len(estudiante_controller.listar_estudiantes())
-            total_docentes = len(docente_controller.listar_docentes())
-            total_cursos = len(curso_controller.listar_cursos())
+    #         total_estudiantes = len(estudiante_controller.listar_estudiantes())
+    #         total_docentes = len(docente_controller.listar_docentes())
+    #         total_cursos = len(curso_controller.listar_cursos())
             
-            # Mostrar estadísticas con iconos
-            stats_text = f"""
-            👥 Total de Estudiantes: {total_estudiantes}
-            👨‍🏫 Total de Docentes: {total_docentes}
-            📚 Total de Cursos: {total_cursos}
-            """
+    #         # Mostrar estadísticas con iconos
+    #         stats_text = f"""
+    #         👥 Total de Estudiantes: {total_estudiantes}
+    #         👨‍🏫 Total de Docentes: {total_docentes}
+    #         📚 Total de Cursos: {total_cursos}
+    #         """
             
-            label_stats = ctk.CTkLabel(
-                frame_stats,
-                text=stats_text,
-                font=("Helvetica", 16),
-                justify="left"
-            )
-            label_stats.pack(pady=20)
+    #         label_stats = ctk.CTkLabel(
+    #             frame_stats,
+    #             text=stats_text,
+    #             font=("Helvetica", 16),
+    #             justify="left"
+    #         )
+    #         label_stats.pack(pady=20)
             
-        except Exception as e:
-            label_error = ctk.CTkLabel(
-                frame_stats,
-                text=f"Error al cargar estadísticas: {str(e)}",
-                text_color="red"
-            )
-            label_error.pack(pady=20)
+    #     except Exception as e:
+    #         label_error = ctk.CTkLabel(
+    #             frame_stats,
+    #             text=f"Error al cargar estadísticas: {str(e)}",
+    #             text_color="red"
+    #         )
+    #         label_error.pack(pady=20)
         
-        # Botón para cerrar
-        btn_cerrar = ctk.CTkButton(
-            frame_stats,
-            text="Cerrar",
-            command=ventana_stats.destroy
-        )
-        btn_cerrar.pack(pady=10)
+    #     # Botón para cerrar
+    #     btn_cerrar = ctk.CTkButton(
+    #         frame_stats,
+    #         text="Cerrar",
+    #         command=ventana_stats.destroy
+    #     )
+    #     btn_cerrar.pack(pady=10)
 
     def abrir_ventana_estudiantes(self):
-        self.root.destroy()
+        # self.root.destroy()
         # menu_estudiante = MenuEstudiante(db=self.db, tema_actual=self.tema_actual)
         # menu_estudiante.root.mainloop()
+        pass
+        
 
     def abrir_ventana_docentes(self):
-        self.root.destroy()
+        # self.root.destroy()
         # menu_docente = MenuDocenteFull(db=self.db, tema_actual=self.tema_actual)
         # menu_docente.root.mainloop()
+        pass
+        
 
     def abrir_ventana_cursos(self):
-        # TODO: Implementar ventana de cursos
         pass
-
     def abrir_ventana_horarios(self):
-        # TODO: Implementar ventana de horarios
         pass
 
     def abrir_ventana_matriculas(self):
-        # TODO: Implementar ventana de matrículas
         pass
-
+    
     def cambiar_tema(self):
         if self.tema_actual == "Light":
             ctk.set_appearance_mode("Dark")
@@ -223,3 +241,16 @@ class MenuPrincipal:
             ctk.set_appearance_mode("Light")
             self.tema_actual = "Light"
             self.btn_cambiar_tema.configure(text="🌓 Cambiar Tema")
+
+    def salir_programa(self):
+        """Función para cerrar el programa de manera segura"""
+        try:
+            # Cerrar la conexión a la base de datos si existe
+            if self.db:
+                self.db.close()
+            # Destruir la ventana principal
+            self.root.destroy()
+        except Exception as e:
+            print(f"Error al cerrar el programa: {e}")
+            # Forzar el cierre si hay algún error
+            self.root.quit()

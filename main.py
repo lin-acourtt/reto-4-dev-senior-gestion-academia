@@ -9,12 +9,12 @@ from config.database import Database
 if __name__ == "__main__":
     db = Database()
     try:
-        # menu_estudiantes(db)
-        # menu_profesores(db)
-        # menu_cursos(db)
-        # menu_horarios(db)
-        # menu_matriculas(db)
-        MenuPrincipal(db)
+        # Crear la instancia del menú principal
+        app = MenuPrincipal(db=db)
+        # Iniciar el bucle principal de la aplicación
+        app.root.mainloop()
+    except Exception as e:
+        print(f"Error al iniciar la aplicación: {e}")
     finally:
         db.close()
 
