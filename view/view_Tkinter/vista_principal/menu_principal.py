@@ -137,9 +137,8 @@ class VentanaMenuPrincipal(ctk.CTk):
         # self.root.destroy()
         # menu_estudiante = MenuEstudiante(db=self.db, tema_actual=self.tema_actual)
         # menu_estudiante.root.mainloop()
-        print("Ventana estudiantes")
-
-        self.ventana_menu_estudiantes = VentanaMenuEstudiante()
+        self.destroy()
+        self.ventana_menu_estudiantes = VentanaMenuEstudiante(self.db)
         self.ventana_menu_estudiantes.iniciar_ventana(self.tema_actual)
         
 

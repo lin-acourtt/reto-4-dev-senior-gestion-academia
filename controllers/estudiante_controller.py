@@ -41,7 +41,8 @@ class EstudianteController:
             WHERE id_estudiante= %s
         """
         params = (nombre,apellido,correo,telefono,id_estudiante)
-        resultado = self.db.execute_select(sql, params)
+        self.db.execute_query(sql,params)
+        #resultado = self.db.execute_select(sql, params)
 
     def eliminar_estudiante_por_id(self, id_estudiante):
         """

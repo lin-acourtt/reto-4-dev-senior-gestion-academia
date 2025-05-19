@@ -40,6 +40,7 @@ class Database:
     # public method to select row    
     def execute_select(self, query, params=None):
         self._execute(query, params)
+        #self.connection.commit()
         return self.cursor.fetchall()
 
     # public method to selece 1

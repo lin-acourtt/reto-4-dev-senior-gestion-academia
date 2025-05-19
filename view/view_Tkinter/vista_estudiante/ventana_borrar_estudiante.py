@@ -1,0 +1,63 @@
+import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
+from mysql.connector import IntegrityError
+from config.appearance import centrar_ventana
+
+class VentanaBorrarEstudiante(ctk.CTk):
+    def __init__(self, parent=None):
+        super().__init__()
+        self.parent = parent
+        
+        centrar_ventana(self,proporcion=0.25)
+        self.title("Confirmación")
+        self.label_titulo = ctk.CTkLabel(self, text="Borrar estudiante",font=("Helvetica", 14, "bold"))
+        self.label_titulo.grid(row = 0, column = 0, columnspan=2)
+
+        # Se obtienen el ID del estudiante seleccionado en la tabla
+        iid_sel = self.parent.frame_tabla_estudiantes.tabla_estudiantes.selection()[0]
+        self.label_msj = ctk.CTkLabel(self, text=f"¿Acepta borrar el estudiante con ID: {iid_sel}?")
+        self.label_msj.grid(row = 1, column = 0, columnspan=2)
+        
+        self.btn_confirmar = ctk.CTkButton(self, text="Sí", command=lambda: self.confirmar_borrado(iid_sel))
+        self.btn_confirmar.grid(row = 2, column = 0)
+        
+        self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_borrado)
+        self.btn_cancelar.grid(row = 2, column = 1)
+
+        self.protocol("WM_DELETE_WINDOW", self.actualizar_estado_ventana_al_cerrar)
+
+    def confirmar_borrado(self,id_sel):
+
+        try:
+            # Se utiliza el controlador estudiante para eliminar un estudiante por el ID especificado
+            self.parent.controlador_estudiante.eliminar_estudiante_por_id(id_sel)
+            
+            # Actualizar tabla en el tree view
+            self.parent.frame_tabla_estudiantes.tabla_estudiantes.delete(id_sel)
+            
+            # Dar un mensaje de confirmación
+            CTkMessagebox(
+                title= "Eliminado",
+                message= "Estudiante eliminado con éxito",
+                icon= "check",
+                option_1="OK"
+            )
+            self.actualizar_estado_ventana_al_cerrar()
+        except IntegrityError as e:
+            print(f"Error de integridad: {e.msg}")
+        except Exception as e: 
+            print(f"Error al registrar el estudiante: {str(e)}")
+
+
+    def cancelar_borrado(self):
+        CTkMessagebox(
+            title= "Sin cambios",
+            message= "No se guardarán cambios",
+            icon= "warning",
+            option_1="OK"
+        )
+        self.actualizar_estado_ventana_al_cerrar()
+
+    def actualizar_estado_ventana_al_cerrar(self):
+        self.parent.ventana_borrar_esta_abierta = False
+        self.destroy()
