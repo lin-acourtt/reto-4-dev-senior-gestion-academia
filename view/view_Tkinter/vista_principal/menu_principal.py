@@ -9,117 +9,40 @@ from controllers.curso_controller import CursoController
 from controllers.horario_controller import HorarioController
 from controllers.matricula_controller import MatriculaController
 
-#Crear la clase principal de la ventana la cual se encargar de recibir a las demas ventanas
-class MenuPrincipal:
-    def __init__(self, db=None, tema_actual="System"):
-        self.db = db    
-        self.root = ctk.CTk()
-        self.root.title("Sistema de Gestión Académica 'Lindsey - Santiago' ")
+from config.database import Database
+from config.appearance import centrar_ventana
+
+from .frame_principal import FramePrincipal
+
+from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudiante
+
+# Crear la clase de la ventana principial
+# desde la cual se podrá hacer la gestión académica 
+
+class VentanaMenuPrincipal(ctk.CTk):
+
+    def __init__(self, db: Database = None):
+        super().__init__()
+        # El método constructor asegura que el atributo "db" sea de tipo "Database""
+        self.db = db
+
+    def iniciar_ventana(self, tema_actual="System"):    
+        
+        self.title("Sistema de Gestión Académica - Dev Senior - Reto 4 - 'Lindsey - Santiago' ")
         
         # Configurar el tema de la ventana
         ctk.set_appearance_mode(tema_actual)
         self.tema_actual = tema_actual
-
-        # Obtener el ancho y alto de la pantalla
-        ancho_pantalla = self.root.winfo_screenwidth()
-        alto_pantalla = self.root.winfo_screenheight()
-
-        # Asignar tamaño de la ventana (más grande para el nuevo diseño)
-        ancho_ventana = int(ancho_pantalla * 0.8)
-        alto_ventana = int(alto_pantalla * 0.8)
-        self.root.geometry(f"{ancho_ventana}x{alto_ventana}")
-
+        centrar_ventana(self)
+        
         # Configuración de restricciones de la ventana
-        self.root.resizable(True, True)
-
-        # Coordenadas centradas
-        x = (ancho_pantalla // 2) - (ancho_ventana // 2)
-        y = (alto_pantalla // 2) - (alto_ventana // 2)
-        self.root.geometry(f"{ancho_ventana}x{alto_ventana}+{x}+{y}")
+        self.resizable(True, True)
 
         # Crear el frame principal
-        self.frame_principal = ctk.CTkFrame(self.root)
+        self.frame_principal = FramePrincipal(self)
         self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Frame superior para el título y el botón de tema
-        self.frame_superior = ctk.CTkFrame(self.frame_principal)
-        self.frame_superior.pack(fill="x", padx=10, pady=10)
-
-        # Título con estilo moderno
-        self.titulo = ctk.CTkLabel(
-            self.frame_superior, 
-            text="Sistema de Gestión Académica", 
-            font=("Helvetica", 24, "bold")
-        )
-        self.titulo.pack(side="left", padx=20)
-        
-        # Frame para los botones de la derecha
-        frame_botones = ctk.CTkFrame(self.frame_superior)
-        frame_botones.pack(side="right", padx=10)
-
-        
-        # Botón de tema con icono
-        self.btn_cambiar_tema = ctk.CTkButton(
-            frame_botones,
-            text="🌓 Cambiar Tema",
-            command=self.cambiar_tema,
-            width=120
-        )
-        self.btn_cambiar_tema.pack(side="left", padx=5)
-        
-        # Botón salir del programa
-        self.btn_salir = ctk.CTkButton(
-            frame_botones,
-            text="🚪 Salir",
-            command=self.salir_programa,
-            width=120,
-            fg_color="#FF5555",  # Color rojo para el botón de salir
-            hover_color="#FF3333"  # Color rojo más oscuro al pasar el mouse
-        )
-        self.btn_salir.pack(side="left", padx=5)
-
-        # Frame para el contenido principal (grid de 2x3)
-        self.frame_contenido = ctk.CTkFrame(self.frame_principal)
-        self.frame_contenido.pack(fill="both", expand=True, padx=10, pady=10)
-
-        # Crear los botones principales con iconos y descripciones
-        botones = [
-            ("👥 Estudiantes", "Gestionar estudiantes", self.abrir_ventana_estudiantes),
-            ("👨‍🏫 Docentes", "Gestionar docentes", self.abrir_ventana_docentes),
-            ("📚 Cursos", "Gestionar cursos", self.abrir_ventana_cursos),
-            ("⏰ Horarios", "Gestionar horarios", self.abrir_ventana_horarios),
-            ("📝 Matrículas", "Gestionar matrículas", self.abrir_ventana_matriculas),
-            # ("📊 Estadísticas", "Ver estadísticas", self.mostrar_estadisticas)
-        ]
-
-        # Crear grid de botones
-        for i, (texto, descripcion, comando) in enumerate(botones):
-            frame_boton = ctk.CTkFrame(self.frame_contenido)
-            frame_boton.grid(row=i//3, column=i%3, padx=10, pady=10, sticky="nsew")
-            
-            btn = ctk.CTkButton(
-                frame_boton,
-                text=texto,
-                command=comando,
-                height=100,
-                font=("Helvetica", 16, "bold")
-            )
-            btn.pack(fill="both", expand=True, padx=5, pady=5)
-            
-            # Agregar descripción
-            label_desc = ctk.CTkLabel(
-                frame_boton,
-                text=descripcion,
-                font=("Helvetica", 12)
-            )
-            label_desc.pack(pady=(0, 5))
-
-        # Configurar el grid
-        self.frame_contenido.grid_columnconfigure(0, weight=1)
-        self.frame_contenido.grid_columnconfigure(1, weight=1)
-        self.frame_contenido.grid_columnconfigure(2, weight=1)
-        self.frame_contenido.grid_rowconfigure(0, weight=1)
-        self.frame_contenido.grid_rowconfigure(1, weight=1)
+        self.mainloop()
 
         # Cargar estadísticas iniciales
         # self.cargar_estadisticas()
@@ -214,43 +137,51 @@ class MenuPrincipal:
         # self.root.destroy()
         # menu_estudiante = MenuEstudiante(db=self.db, tema_actual=self.tema_actual)
         # menu_estudiante.root.mainloop()
-        pass
+        print("Ventana estudiantes")
+
+        self.ventana_menu_estudiantes = VentanaMenuEstudiante()
+        self.ventana_menu_estudiantes.iniciar_ventana(self.tema_actual)
         
 
     def abrir_ventana_docentes(self):
         # self.root.destroy()
         # menu_docente = MenuDocenteFull(db=self.db, tema_actual=self.tema_actual)
         # menu_docente.root.mainloop()
-        pass
+        print("Ventana docentes")
         
 
     def abrir_ventana_cursos(self):
-        pass
+        print("Ventana cursos")
+
     def abrir_ventana_horarios(self):
-        pass
+        print("Ventana horarios")
 
     def abrir_ventana_matriculas(self):
-        pass
+        print("Ventana matrículas")
     
     def cambiar_tema(self):
+        """
+        Método para cambiar el estilo de la ventana
+        """
         if self.tema_actual == "Light":
             ctk.set_appearance_mode("Dark")
             self.tema_actual = "Dark"
-            self.btn_cambiar_tema.configure(text="☀️ Cambiar Tema")
+            #self.btn_cambiar_tema.configure(text="☀️ Cambiar Tema")
         else:
             ctk.set_appearance_mode("Light")
             self.tema_actual = "Light"
-            self.btn_cambiar_tema.configure(text="🌓 Cambiar Tema")
+            #self.btn_cambiar_tema.configure(text="🌓 Cambiar Tema")
 
     def salir_programa(self):
-        """Función para cerrar el programa de manera segura"""
+        '''Método para cerrar el programa de manera segura'''
         try:
             # Cerrar la conexión a la base de datos si existe
             if self.db:
                 self.db.close()
             # Destruir la ventana principal
-            self.root.destroy()
+            self.destroy()
         except Exception as e:
             print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error
-            self.root.quit()
+            self.quit()
+

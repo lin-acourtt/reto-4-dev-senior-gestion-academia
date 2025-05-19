@@ -1,4 +1,4 @@
-from view.view_Tkinter.menu_principal import MenuPrincipal
+from view.view_Tkinter.vista_principal.menu_principal import VentanaMenuPrincipal
 # from view.menu_estudiantes import menu_estudiantes
 # from view.menu_profesores import menu_profesores
 # from view.menu_cursos import menu_cursos
@@ -10,9 +10,9 @@ if __name__ == "__main__":
     db = Database()
     try:
         # Crear la instancia del menú principal
-        app = MenuPrincipal(db=db)
+        app = VentanaMenuPrincipal(db=db)
         # Iniciar el bucle principal de la aplicación
-        app.root.mainloop()
+        app.iniciar_ventana()
     except Exception as e:
         print(f"Error al iniciar la aplicación: {e}")
     finally:
