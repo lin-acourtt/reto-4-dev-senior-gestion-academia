@@ -7,7 +7,7 @@ from CTkTable import *
 class FrameTablaEstudiantes(CTkFrame):
     def __init__(self, master):
         """
-        Al crear este frame, se debe especificar el parent como la ventana principal de menú estudiantes
+            Al crear este frame, se debe especificar el parent como la ventana del menú principal 
         """
         super().__init__(master)
 
@@ -33,9 +33,9 @@ class FrameTablaEstudiantes(CTkFrame):
         
 
     def crear_tabla_estudiantes(self):
-
-        # Con Treeview
-        
+        """
+            Método para generar un componente TreeView para la impresión de la información de los estudiantes.
+        """
         # Crear el Treeviw, las columnas y escoger mostrar los headers
         self.tabla_estudiantes = ttk.Treeview(
             self,
@@ -56,36 +56,12 @@ class FrameTablaEstudiantes(CTkFrame):
         estudiantes = self.master.obtener_lista_estudiantes()
 
         self.imprimir_informacion_en_tabla(estudiantes)
-                
-    def crear_tabla_estudiantes2(self):
-
-        # Con CTkTable
-
-        # Obtener la información que se pondrá en la tabla
-        estudiantes = self.master.obtener_lista_estudiantes()
-
-        filas = len(estudiantes)+1
-        columnas = 4
-        valores = [['ID','Nombre','Apellido','Correo','Teléfono']]
-
-        # Llenar los valores con la información de estudiantes
-        for est in estudiantes:
-            valores.append(
-                [
-                    est.id_estudiante,
-                    est.nombre,
-                    est.apellido,
-                    est.correo,
-                    est.telefono
-                ]
-            )
-
-        self.tabla_estudiantes = CTkTable(master=self, row=filas, column=columnas, values=valores)
-
-        for i in range(20):
-            self.tabla_estudiantes.add_row([f'test{i}',f'test{i}',f'test{i}',f'test{i}'])
-
+    
     def imprimir_informacion_en_tabla(self, estudiantes):
+        """
+            Método que recibe una lista de estudiantes (objetos), e imprime sus atributos en el TreeView
+            - estudiantes: list[Estudiante]
+        """
         # Llenar el Treeview con esta información
         for est in estudiantes:
             try:
@@ -101,7 +77,7 @@ class FrameTablaEstudiantes(CTkFrame):
                     )
                 )
             except:
-                # Si ya existe el elemento, se le hace skip
+                # se usa para reimprimir la tabla, si un ID ya existe, se sigue con el próximo item
                 continue
 
         """for i in range(20):
@@ -115,6 +91,3 @@ class FrameTablaEstudiantes(CTkFrame):
                     f'test{i+30}'
                 )
             )"""
-
-
-        

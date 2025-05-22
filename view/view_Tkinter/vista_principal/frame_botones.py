@@ -5,7 +5,7 @@ class FrameBotones(CTkFrame):
 
     def __init__(self, master):
         """
-        Al crear este frame, se debe especificar el parent, que debería ser 'FrameTitulo',
+            Al crear este frame, se debe especificar el parent, que debería ser 'FrameTitulo',
         """
         super().__init__(master)
 
@@ -13,10 +13,7 @@ class FrameBotones(CTkFrame):
         self.btn_cambiar_tema = ctk.CTkButton(
             self,
             text="🌓 Cambiar Tema",
-            command=master.master.master.cambiar_tema,
-            # Master 1: FrameTitulo
-            # Master 2: FrameSuperior
-            # Master 3: Ventana Principal
+            command=master.master_frame_superior.master_frame_principal.cambiar_tema,
             width=120
         )
         self.btn_cambiar_tema.pack(side="left", padx=5)
@@ -25,7 +22,7 @@ class FrameBotones(CTkFrame):
         self.btn_salir = ctk.CTkButton(
             self,
             text="🚪 Salir",
-            command=master.master.master.salir_programa,
+            command=master.master_frame_superior.master_frame_principal.salir_programa,
             width=120,
             fg_color="#FF5555",  # Color rojo para el botón de salir
             hover_color="#FF3333"  # Color rojo más oscuro al pasar el mouse

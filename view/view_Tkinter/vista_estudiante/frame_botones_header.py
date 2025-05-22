@@ -13,7 +13,7 @@ class FrameBotonesHeader(CTkFrame):
         self.btn_cambiar_tema = ctk.CTkButton(
             self,
             text="🌓 Cambiar Tema",
-            command=master.master.cambiar_tema,
+            command=master.master_header.cambiar_tema,
             # Master 1: FrameHeader
             # Master 2: Ventana Principal - Estudiante
             width=120
@@ -24,7 +24,7 @@ class FrameBotonesHeader(CTkFrame):
         self.btn_salir = ctk.CTkButton(
             self,
             text="⬅️ Regresar",
-            command=master.master.regresar_menu_principal,
+            command=master.master_header.regresar_menu_principal,
             width=120,
             fg_color="#FF5555",  # Color rojo para el botón de salir
             hover_color="#FF3333"  # Color rojo más oscuro al pasar el mouse

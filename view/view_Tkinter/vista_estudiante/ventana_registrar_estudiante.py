@@ -1,9 +1,12 @@
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
+from .msgbox_estudiantes import msg_registro_cancelado, msg_registro_exitoso
 from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 
 class VentanaRegistrarEstudiante(ctk.CTk):
+    """
+        Inicializa la ventana para registrar estudiantes.
+    """
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
@@ -34,6 +37,9 @@ class VentanaRegistrarEstudiante(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.actualizar_estado_ventana_al_cerrar)
 
     def guardar_registro(self):
+        """
+            Actualiza la base de datos (tabla estudiantes), con la información del estudiante que se escribió en el formulario.
+        """
         # Obtener los datos en los elementos de "Entry"
         nombre = self.entry_nombre.get()
         apellido = self.entry_apellido.get()
@@ -44,17 +50,15 @@ class VentanaRegistrarEstudiante(ctk.CTk):
             # Utilizar el controlador de estudiante para registrar un nuevo estudiante
             self.parent.controlador_estudiante.registrar_estudiante(nombre, apellido, correo, telefono)
             
-            # Obtener la nueva lista de estudiantes
+            # Inserta el nuevo estudiante en la lista de estudiantes
+            # (Se re-imprime toda la lista)
             estudiantes = self.parent.obtener_lista_estudiantes()
             self.parent.frame_tabla_estudiantes.imprimir_informacion_en_tabla(estudiantes)
             
             # Mostrar un mensaje de registro exitoso
-            CTkMessagebox(
-                title= "Guardado",
-                message= "Estudiante registrado con éxito",
-                icon= "check",
-                option_1="OK"
-            )
+            msg_registro_exitoso()
+
+            # Cierra la ventana y cambia el estado de esta ventana a cerrado
             self.actualizar_estado_ventana_al_cerrar()
         except IntegrityError as e:
             print(f"Error de integridad: {e.msg}")
@@ -63,12 +67,10 @@ class VentanaRegistrarEstudiante(ctk.CTk):
 
 
     def cancelar_registro(self):
-        CTkMessagebox(
-            title= "Sin cambios",
-            message= "No se guardarán cambios",
-            icon= "warning",
-            option_1="OK"
-        )
+        """
+            Muestra un mensaje de alerta, y se cierra la ventana
+        """
+        msg_registro_cancelado()
         self.actualizar_estado_ventana_al_cerrar()
 
     def actualizar_estado_ventana_al_cerrar(self):

@@ -15,7 +15,7 @@ class FrameFooter(CTkFrame):
         self.btn_registrar_estudiante = ctk.CTkButton(self, text="➕ Registrar", command= self.master.abrir_ventana_registro)
         self.btn_actualizar_estudiante = ctk.CTkButton(self, text="✏️ Actualizar",state=DISABLED, command= self.master.abrir_ventana_actualizacion)
         self.btn_eliminar_estudiante = ctk.CTkButton(self, text="🗑️ Eliminar",state=DISABLED, command= self.master.abrir_ventana_borrar)
-        self.btn_buscar_estudiante = ctk.CTkButton(self, text="🔍 Buscar")
+        self.btn_buscar_estudiante = ctk.CTkButton(self, text="🔍 Buscar",command=self.master.abrir_ventana_buscar)
         self.btn_ver_matriculas_estudiante = ctk.CTkButton(self, text="🗎 Ver matrículas",state=DISABLED)
         self.btn_ver_horarios_estudiante = ctk.CTkButton(self, text="⏱️ Ver horarios",state=DISABLED)
 

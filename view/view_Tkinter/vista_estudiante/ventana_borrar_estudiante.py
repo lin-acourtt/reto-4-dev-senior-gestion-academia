@@ -8,21 +8,29 @@ class VentanaBorrarEstudiante(ctk.CTk):
         super().__init__()
         self.parent = parent
         
-        centrar_ventana(self,proporcion=0.25)
+        centrar_ventana(self,0.3,0.15)
         self.title("Confirmación")
         self.label_titulo = ctk.CTkLabel(self, text="Borrar estudiante",font=("Helvetica", 14, "bold"))
-        self.label_titulo.grid(row = 0, column = 0, columnspan=2)
+        #self.label_titulo.grid(row = 0, column = 0, columnspan=2)
+        self.label_titulo.pack()
 
         # Se obtienen el ID del estudiante seleccionado en la tabla
         iid_sel = self.parent.frame_tabla_estudiantes.tabla_estudiantes.selection()[0]
         self.label_msj = ctk.CTkLabel(self, text=f"¿Acepta borrar el estudiante con ID: {iid_sel}?")
-        self.label_msj.grid(row = 1, column = 0, columnspan=2)
+        #self.label_msj.grid(row = 1, column = 0, columnspan=2)
+        self.label_msj.pack()
         
-        self.btn_confirmar = ctk.CTkButton(self, text="Sí", command=lambda: self.confirmar_borrado(iid_sel))
-        self.btn_confirmar.grid(row = 2, column = 0)
+        self.frame_botones = ctk.CTkFrame(self)
+
+        self.btn_confirmar = ctk.CTkButton(self.frame_botones, text="Sí", command=lambda: self.confirmar_borrado(iid_sel))
+        self.btn_confirmar.grid(row = 2, column = 0, padx=20, pady=5)
+        #self.btn_confirmar.pack()
         
-        self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_borrado)
-        self.btn_cancelar.grid(row = 2, column = 1)
+        self.btn_cancelar = ctk.CTkButton(self.frame_botones, text="Cancelar", command=self.cancelar_borrado)
+        self.btn_cancelar.grid(row = 2, column = 1, padx=20, pady=5)
+        #self.btn_cancelar.pack()
+
+        self.frame_botones.pack()
 
         self.protocol("WM_DELETE_WINDOW", self.actualizar_estado_ventana_al_cerrar)
 

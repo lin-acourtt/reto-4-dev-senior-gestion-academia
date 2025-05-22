@@ -22,12 +22,18 @@ from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudi
 class VentanaMenuPrincipal(ctk.CTk):
 
     def __init__(self, db: Database = None):
+        """
+            Constructor, requiere de:
+            - db: Base de datos, objeto tipo Database
+        """
         super().__init__()
         # El método constructor asegura que el atributo "db" sea de tipo "Database""
         self.db = db
 
-    def iniciar_ventana(self, tema_actual="System"):    
-        
+    def iniciar_ventana(self, tema_actual="System"):   
+        """
+            Inicializa la ventana del menú principal
+        """ 
         self.title("Sistema de Gestión Académica - Dev Senior - Reto 4 - 'Lindsey - Santiago' ")
         
         # Configurar el tema de la ventana
@@ -38,7 +44,7 @@ class VentanaMenuPrincipal(ctk.CTk):
         # Configuración de restricciones de la ventana
         self.resizable(True, True)
 
-        # Crear el frame principal
+        # Crear el frame principal - Contiene FrameSuperior y FrameContenido
         self.frame_principal = FramePrincipal(self)
         self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
 
@@ -134,9 +140,10 @@ class VentanaMenuPrincipal(ctk.CTk):
     #     btn_cerrar.pack(pady=10)
 
     def abrir_ventana_estudiantes(self):
-        # self.root.destroy()
-        # menu_estudiante = MenuEstudiante(db=self.db, tema_actual=self.tema_actual)
-        # menu_estudiante.root.mainloop()
+        """
+            Abre la ventana para operaciones con estudiantes.
+            Para esto, se cierra el menú principal.
+        """
         self.destroy()
         self.ventana_menu_estudiantes = VentanaMenuEstudiante(self.db)
         self.ventana_menu_estudiantes.iniciar_ventana(self.tema_actual)
@@ -160,25 +167,28 @@ class VentanaMenuPrincipal(ctk.CTk):
     
     def cambiar_tema(self):
         """
-        Método para cambiar el estilo de la ventana
+            Método para cambiar el estilo de la ventana
         """
         if self.tema_actual == "Light":
             ctk.set_appearance_mode("Dark")
             self.tema_actual = "Dark"
-            #self.btn_cambiar_tema.configure(text="☀️ Cambiar Tema")
+            self.frame_principal.frame_superior.frame_botones.btn_cambiar_tema.configure(text="☀️ Cambiar Tema")
         else:
             ctk.set_appearance_mode("Light")
             self.tema_actual = "Light"
-            #self.btn_cambiar_tema.configure(text="🌓 Cambiar Tema")
+            self.frame_principal.frame_superior.frame_botones.btn_cambiar_tema.configure(text="🌙 Cambiar Tema")
 
     def salir_programa(self):
-        '''Método para cerrar el programa de manera segura'''
+        """
+            Método para cerrar el programa de manera segura
+        """
         try:
             # Cerrar la conexión a la base de datos si existe
+            self.destroy()
             if self.db:
                 self.db.close()
             # Destruir la ventana principal
-            self.destroy()
+            
         except Exception as e:
             print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error

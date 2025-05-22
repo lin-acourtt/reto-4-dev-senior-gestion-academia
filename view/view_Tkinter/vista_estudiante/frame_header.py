@@ -3,11 +3,12 @@ from customtkinter import CTkFrame
 from .frame_botones_header import FrameBotonesHeader
 
 class FrameHeader(CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master_header):
         """
         Al crear este frame, se debe especificar el parent, que debería ser 'VentanaMenuEstudiante',
         """
-        super().__init__(master)
+        super().__init__(master_header)
+        self.master_header = master_header
 
         # Título con estilo moderno
         self.titulo = ctk.CTkLabel(
