@@ -27,6 +27,14 @@ def msg_sin_cambios():
             icon= "warning",
             option_1="OK"
         )
+    
+def msg_no_encontrado(id):
+    CTkMessagebox(
+            title= "No encontrado",
+            message= f"No se encontró el ID {id}.",
+            icon= "cancel",
+            option_1="OK"
+        )
 
 ################### Borrar
 def show_info():

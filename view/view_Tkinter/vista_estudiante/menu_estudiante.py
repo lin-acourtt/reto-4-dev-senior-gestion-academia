@@ -163,6 +163,7 @@ class VentanaMenuEstudiante(ctk.CTk):
         """
             Método para cerrar la ventana y regresar el menú principal
         """
+        self.quit()
         self.destroy()
 
         # Abrir de nuevo el menú principal

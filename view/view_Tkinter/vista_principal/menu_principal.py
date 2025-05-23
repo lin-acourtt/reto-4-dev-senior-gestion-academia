@@ -184,6 +184,7 @@ class VentanaMenuPrincipal(ctk.CTk):
         """
         try:
             # Cerrar la conexión a la base de datos si existe
+            self.quit()
             self.destroy()
             if self.db:
                 self.db.close()
