@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import ttk
 from customtkinter import CTkScrollableFrame
 from customtkinter import CTkFrame
-from CTkTable import *
+# from CTkTable import * 
 
 class FrameTablaEstudiantes(CTkFrame):
     def __init__(self, master):

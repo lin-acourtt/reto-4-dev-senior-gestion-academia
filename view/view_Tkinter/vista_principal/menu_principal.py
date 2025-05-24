@@ -15,6 +15,7 @@ from config.appearance import centrar_ventana
 from .frame_principal import FramePrincipal
 
 from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudiante
+from view.view_Tkinter.vista_profesor.vista_menu_profesor import MenuDocenteFull
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -50,94 +51,6 @@ class VentanaMenuPrincipal(ctk.CTk):
 
         self.mainloop()
 
-        # Cargar estadísticas iniciales
-        # self.cargar_estadisticas()
-
-    # def cargar_estadisticas(self):
-    #     try:
-    #         # Crear controladores
-    #         estudiante_controller = EstudianteController(self.db)
-    #         docente_controller = ProfesorController(self.db)
-    #         curso_controller = CursoController(self.db)
-
-    #         # Obtener estadísticas
-    #         total_estudiantes = len(estudiante_controller.listar_estudiantes())
-    #         total_docentes = len(docente_controller.listar_docentes())
-    #         total_cursos = len(curso_controller.listar_cursos())
-
-    #         # Actualizar etiquetas de estadísticas si existen
-    #         if hasattr(self, 'label_estadisticas'):
-    #             self.label_estadisticas.configure(
-    #                 text=f"Estadísticas:\n"
-    #                      f"Estudiantes: {total_estudiantes}\n"
-    #                      f"Docentes: {total_docentes}\n"
-    #                      f"Cursos: {total_cursos}"
-    #             )
-    #     except Exception as e:
-    #         print(f"Error al cargar estadísticas: {e}")
-
-    # def mostrar_estadisticas(self):
-    #     # Crear ventana de estadísticas
-    #     ventana_stats = ctk.CTkToplevel(self.root)
-    #     ventana_stats.title("Estadísticas del Sistema")
-    #     ventana_stats.geometry("400x300")
-    #     ventana_stats.resizable(False, False)
-        
-    #     # Configurar el tema
-    #     ctk.set_appearance_mode(self.tema_actual)
-        
-    #     # Frame para las estadísticas
-    #     frame_stats = ctk.CTkFrame(ventana_stats)
-    #     frame_stats.pack(fill="both", expand=True, padx=20, pady=20)
-        
-    #     # Título
-    #     titulo = ctk.CTkLabel(
-    #         frame_stats,
-    #         text="Estadísticas del Sistema",
-    #         font=("Helvetica", 20, "bold")
-    #     )
-    #     titulo.pack(pady=10)
-        
-    #     # Cargar y mostrar estadísticas
-    #     try:
-    #         estudiante_controller = EstudianteController(self.db)
-    #         docente_controller = ProfesorController(self.db)
-    #         curso_controller = CursoController(self.db)
-            
-    #         total_estudiantes = len(estudiante_controller.listar_estudiantes())
-    #         total_docentes = len(docente_controller.listar_docentes())
-    #         total_cursos = len(curso_controller.listar_cursos())
-            
-    #         # Mostrar estadísticas con iconos
-    #         stats_text = f"""
-    #         👥 Total de Estudiantes: {total_estudiantes}
-    #         👨‍🏫 Total de Docentes: {total_docentes}
-    #         📚 Total de Cursos: {total_cursos}
-    #         """
-            
-    #         label_stats = ctk.CTkLabel(
-    #             frame_stats,
-    #             text=stats_text,
-    #             font=("Helvetica", 16),
-    #             justify="left"
-    #         )
-    #         label_stats.pack(pady=20)
-            
-    #     except Exception as e:
-    #         label_error = ctk.CTkLabel(
-    #             frame_stats,
-    #             text=f"Error al cargar estadísticas: {str(e)}",
-    #             text_color="red"
-    #         )
-    #         label_error.pack(pady=20)
-        
-    #     # Botón para cerrar
-    #     btn_cerrar = ctk.CTkButton(
-    #         frame_stats,
-    #         text="Cerrar",
-    #         command=ventana_stats.destroy
-    #     )
-    #     btn_cerrar.pack(pady=10)
 
     def abrir_ventana_estudiantes(self):
         """
@@ -149,12 +62,14 @@ class VentanaMenuPrincipal(ctk.CTk):
         self.ventana_menu_estudiantes.iniciar_ventana(self.tema_actual)
         
 
-    def abrir_ventana_docentes(self):
-        # self.root.destroy()
-        # menu_docente = MenuDocenteFull(db=self.db, tema_actual=self.tema_actual)
-        # menu_docente.root.mainloop()
-        print("Ventana docentes")
-        
+    def abrir_ventana_profesores(self):
+        """
+            Abre la ventana para operaciones con docentes.
+            Para esto, se cierra el menú principal.
+        """
+        self.destroy()
+        ventana_docentes = MenuDocenteFull(db=self.db, tema_actual=self.tema_actual)
+        ventana_docentes.root.mainloop()
 
     def abrir_ventana_cursos(self):
         print("Ventana cursos")

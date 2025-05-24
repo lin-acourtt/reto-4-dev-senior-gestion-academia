@@ -19,7 +19,7 @@ class FramePrincipal(CTkFrame):
         # Creación del frame de contenido - Tiene las operaciones disponibles del menú
         botones = [
             ("👥 Estudiantes", "Gestionar estudiantes", master_frame_principal.abrir_ventana_estudiantes),
-            ("👨‍🏫 Docentes", "Gestionar docentes", master_frame_principal.abrir_ventana_docentes),
+            ("👨‍🏫 Profesores", "Gestionar profesores", master_frame_principal.abrir_ventana_profesores),
             ("📚 Cursos", "Gestionar cursos", master_frame_principal.abrir_ventana_cursos),
             ("⏰ Horarios", "Gestionar horarios", master_frame_principal.abrir_ventana_horarios),
             ("📝 Matrículas", "Gestionar matrículas", master_frame_principal.abrir_ventana_matriculas),
