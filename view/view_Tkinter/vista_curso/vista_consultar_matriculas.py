@@ -1,22 +1,29 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk, messagebox
+from config.appearance import centrar_ventana
+from controllers.matricula_controller import MatriculaController
 
 class VistaConsultarMatriculas:
-    def __init__(self, root):
+    def __init__(self, root, db=None):
         self.root = root
+        self.db = db
+        self.controlador_matricula = MatriculaController(self.db)
+        
+        # Configurar la ventana
         self.root.title("Consultar Matrículas")
         self.root.geometry("800x600")
+        centrar_ventana(self.root)
         
         # Frame principal
-        self.frame_principal = ttk.Frame(self.root, padding="20")
-        self.frame_principal.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.frame_principal = ctk.CTkFrame(self.root)
+        self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Título
-        ttk.Label(
+        ctk.CTkLabel(
             self.frame_principal,
             text="Consultar Matrículas",
-            font=("Helvetica", 16, "bold")
-        ).grid(row=0, column=0, columnspan=2, pady=20)
+            font=("Helvetica", 24, "bold")
+        ).pack(pady=20)
         
         # Filtros de búsqueda
         self.crear_filtros()
@@ -27,36 +34,53 @@ class VistaConsultarMatriculas:
         # Botones
         self.crear_botones()
         
+        # Cargar datos iniciales
+        self.cargar_matriculas()
+        
     def crear_filtros(self):
-        frame_filtros = ttk.LabelFrame(self.frame_principal, text="Filtros de búsqueda", padding="10")
-        frame_filtros.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
+        # Frame para los filtros
+        frame_filtros = ctk.CTkFrame(self.frame_principal)
+        frame_filtros.pack(fill="x", padx=20, pady=10)
+        
+        # Título de la sección
+        ctk.CTkLabel(
+            frame_filtros,
+            text="Filtros de búsqueda",
+            font=("Helvetica", 16, "bold")
+        ).pack(pady=10)
+        
+        # Frame para los campos de filtro
+        frame_campos = ctk.CTkFrame(frame_filtros)
+        frame_campos.pack(fill="x", padx=20, pady=10)
         
         # Filtro por curso
-        ttk.Label(frame_filtros, text="Curso:").grid(row=0, column=0, padx=5)
-        self.filtro_curso = ttk.Combobox(frame_filtros, width=30)
-        self.filtro_curso.grid(row=0, column=1, padx=5)
+        ctk.CTkLabel(frame_campos, text="Curso:").pack(side="left", padx=5)
+        self.filtro_curso = ctk.CTkComboBox(frame_campos, width=200)
+        self.filtro_curso.pack(side="left", padx=5)
         
         # Filtro por estudiante
-        ttk.Label(frame_filtros, text="Estudiante:").grid(row=0, column=2, padx=5)
-        self.filtro_estudiante = ttk.Combobox(frame_filtros, width=30)
-        self.filtro_estudiante.grid(row=0, column=3, padx=5)
+        ctk.CTkLabel(frame_campos, text="Estudiante:").pack(side="left", padx=5)
+        self.filtro_estudiante = ctk.CTkComboBox(frame_campos, width=200)
+        self.filtro_estudiante.pack(side="left", padx=5)
         
         # Botón de búsqueda
-        ttk.Button(
-            frame_filtros,
+        ctk.CTkButton(
+            frame_campos,
             text="Buscar",
             command=self.buscar_matriculas,
-            style="Accent.TButton"
-        ).grid(row=0, column=4, padx=5)
+            width=100,
+            height=30,
+            corner_radius=10
+        ).pack(side="left", padx=5)
         
     def crear_tabla_matriculas(self):
         # Frame para la tabla
-        frame_tabla = ttk.Frame(self.frame_principal)
-        frame_tabla.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+        frame_tabla = ctk.CTkFrame(self.frame_principal)
+        frame_tabla.pack(fill="both", expand=True, padx=20, pady=10)
         
         # Crear Treeview
         columnas = ("id", "estudiante", "curso", "fecha_matricula", "profesor")
-        self.tabla_matriculas = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
+        self.tabla_matriculas = ttk.Treeview(frame_tabla, columns=columnas, show="headings", height=15)
         
         # Definir encabezados
         self.tabla_matriculas.heading("id", text="ID")
@@ -66,47 +90,106 @@ class VistaConsultarMatriculas:
         self.tabla_matriculas.heading("profesor", text="Profesor")
         
         # Configurar columnas
-        self.tabla_matriculas.column("id", width=50)
+        self.tabla_matriculas.column("id", width=50, anchor="center")
         self.tabla_matriculas.column("estudiante", width=200)
         self.tabla_matriculas.column("curso", width=200)
         self.tabla_matriculas.column("fecha_matricula", width=150)
         self.tabla_matriculas.column("profesor", width=150)
         
         # Scrollbar
-        scrollbar = ttk.Scrollbar(frame_tabla, orient=tk.VERTICAL, command=self.tabla_matriculas.yview)
+        scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=self.tabla_matriculas.yview)
         self.tabla_matriculas.configure(yscrollcommand=scrollbar.set)
         
         # Posicionar elementos
-        self.tabla_matriculas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.tabla_matriculas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
         
     def crear_botones(self):
-        frame_botones = ttk.Frame(self.frame_principal)
-        frame_botones.grid(row=3, column=0, columnspan=2, pady=20)
+        frame_botones = ctk.CTkFrame(self.frame_principal)
+        frame_botones.pack(fill="x", padx=20, pady=20)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
             text="Actualizar",
-            command=self.actualizar_lista,
-            style="Accent.TButton"
-        ).grid(row=0, column=0, padx=5)
+            command=self.cargar_matriculas,
+            width=200,
+            height=40,
+            corner_radius=10
+        ).pack(side="left", padx=10, expand=True)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
             text="Cerrar",
             command=self.root.destroy,
-            style="Danger.TButton"
-        ).grid(row=0, column=1, padx=5)
+            width=200,
+            height=40,
+            corner_radius=10,
+            fg_color="#FF5555",
+            hover_color="#FF3333"
+        ).pack(side="right", padx=10, expand=True)
         
+    def cargar_matriculas(self):
+        """Carga todas las matrículas en la tabla"""
+        try:
+            # Limpiar tabla
+            for item in self.tabla_matriculas.get_children():
+                self.tabla_matriculas.delete(item)
+                
+            # Obtener matrículas de la base de datos
+            matriculas = self.controlador_matricula.listar_matriculas()
+            
+            # Insertar cada matrícula en la tabla
+            for matricula in matriculas:
+                self.tabla_matriculas.insert(
+                    "",
+                    "end",
+                    values=(
+                        matricula.id_matricula,
+                        f"{matricula.estudiante.nombre} {matricula.estudiante.apellido}",
+                        matricula.curso.nombre,
+                        matricula.fecha_matricula,
+                        matricula.curso.profesor
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al cargar matrículas: {str(e)}")
+            
     def buscar_matriculas(self):
-        # Aquí irá la lógica para buscar matrículas
-        messagebox.showinfo("Búsqueda", "Buscando matrículas...")
-        
-    def actualizar_lista(self):
-        # Aquí irá la lógica para actualizar la lista de matrículas
-        messagebox.showinfo("Actualización", "Lista de matrículas actualizada")
+        """Busca matrículas según los filtros seleccionados"""
+        try:
+            # Obtener valores de los filtros
+            curso = self.filtro_curso.get()
+            estudiante = self.filtro_estudiante.get()
+            
+            # Limpiar tabla
+            for item in self.tabla_matriculas.get_children():
+                self.tabla_matriculas.delete(item)
+                
+            # Buscar matrículas según los filtros
+            matriculas = self.controlador_matricula.buscar_matriculas(
+                nombre_curso=curso if curso else None,
+                nombre_estudiante=estudiante if estudiante else None
+            )
+            
+            # Insertar resultados en la tabla
+            for matricula in matriculas:
+                self.tabla_matriculas.insert(
+                    "",
+                    "end",
+                    values=(
+                        matricula.id_matricula,
+                        f"{matricula.estudiante.nombre} {matricula.estudiante.apellido}",
+                        matricula.curso.nombre,
+                        matricula.fecha_matricula,
+                        matricula.curso.profesor
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al buscar matrículas: {str(e)}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = ctk.CTk()
     app = VistaConsultarMatriculas(root)
     root.mainloop() 

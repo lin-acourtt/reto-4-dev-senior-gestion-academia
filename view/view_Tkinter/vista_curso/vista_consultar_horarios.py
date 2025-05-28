@@ -1,22 +1,31 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk, messagebox
+from config.appearance import centrar_ventana
+from controllers.curso_controller import CursoController
+from controllers.horario_controller import HorarioController
 
 class VistaConsultarHorarios:
-    def __init__(self, root):
+    def __init__(self, root, db=None):
         self.root = root
+        self.db = db
+        self.controlador_curso = CursoController(self.db)
+        self.controlador_horario = HorarioController(self.db)
+        
+        # Configurar la ventana
         self.root.title("Consultar Horarios")
         self.root.geometry("800x600")
+        centrar_ventana(self.root)
         
         # Frame principal
-        self.frame_principal = ttk.Frame(self.root, padding="20")
-        self.frame_principal.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.frame_principal = ctk.CTkFrame(self.root)
+        self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Título
-        ttk.Label(
+        ctk.CTkLabel(
             self.frame_principal,
             text="Consultar Horarios de Cursos",
-            font=("Helvetica", 16, "bold")
-        ).grid(row=0, column=0, columnspan=2, pady=20)
+            font=("Helvetica", 24, "bold")
+        ).pack(pady=20)
         
         # Filtros de búsqueda
         self.crear_filtros()
@@ -27,36 +36,57 @@ class VistaConsultarHorarios:
         # Botones
         self.crear_botones()
         
+        # Cargar datos iniciales
+        self.cargar_horarios()
+        
     def crear_filtros(self):
-        frame_filtros = ttk.LabelFrame(self.frame_principal, text="Filtros de búsqueda", padding="10")
-        frame_filtros.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
+        # Frame para los filtros
+        frame_filtros = ctk.CTkFrame(self.frame_principal)
+        frame_filtros.pack(fill="x", padx=20, pady=10)
+        
+        # Título de la sección
+        ctk.CTkLabel(
+            frame_filtros,
+            text="Filtros de búsqueda",
+            font=("Helvetica", 16, "bold")
+        ).pack(pady=10)
+        
+        # Frame para los campos de filtro
+        frame_campos = ctk.CTkFrame(frame_filtros)
+        frame_campos.pack(fill="x", padx=20, pady=10)
         
         # Filtro por curso
-        ttk.Label(frame_filtros, text="Curso:").grid(row=0, column=0, padx=5)
-        self.filtro_curso = ttk.Combobox(frame_filtros, width=30)
-        self.filtro_curso.grid(row=0, column=1, padx=5)
+        ctk.CTkLabel(frame_campos, text="Curso:").pack(side="left", padx=5)
+        self.filtro_curso = ctk.CTkComboBox(frame_campos, width=200)
+        self.filtro_curso.pack(side="left", padx=5)
         
         # Filtro por día
-        ttk.Label(frame_filtros, text="Día:").grid(row=0, column=2, padx=5)
-        self.filtro_dia = ttk.Combobox(frame_filtros, width=20)
-        self.filtro_dia.grid(row=0, column=3, padx=5)
+        ctk.CTkLabel(frame_campos, text="Día:").pack(side="left", padx=5)
+        self.filtro_dia = ctk.CTkComboBox(
+            frame_campos,
+            width=150,
+            values=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+        )
+        self.filtro_dia.pack(side="left", padx=5)
         
         # Botón de búsqueda
-        ttk.Button(
-            frame_filtros,
+        ctk.CTkButton(
+            frame_campos,
             text="Buscar",
             command=self.buscar_horarios,
-            style="Accent.TButton"
-        ).grid(row=0, column=4, padx=5)
+            width=100,
+            height=30,
+            corner_radius=10
+        ).pack(side="left", padx=5)
         
     def crear_tabla_horarios(self):
         # Frame para la tabla
-        frame_tabla = ttk.Frame(self.frame_principal)
-        frame_tabla.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+        frame_tabla = ctk.CTkFrame(self.frame_principal)
+        frame_tabla.pack(fill="both", expand=True, padx=20, pady=10)
         
         # Crear Treeview
         columnas = ("id", "curso", "dia", "hora_inicio", "hora_fin", "profesor", "aula")
-        self.tabla_horarios = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
+        self.tabla_horarios = ttk.Treeview(frame_tabla, columns=columnas, show="headings", height=15)
         
         # Definir encabezados
         self.tabla_horarios.heading("id", text="ID")
@@ -68,7 +98,7 @@ class VistaConsultarHorarios:
         self.tabla_horarios.heading("aula", text="Aula")
         
         # Configurar columnas
-        self.tabla_horarios.column("id", width=50)
+        self.tabla_horarios.column("id", width=50, anchor="center")
         self.tabla_horarios.column("curso", width=200)
         self.tabla_horarios.column("dia", width=100)
         self.tabla_horarios.column("hora_inicio", width=100)
@@ -77,40 +107,103 @@ class VistaConsultarHorarios:
         self.tabla_horarios.column("aula", width=100)
         
         # Scrollbar
-        scrollbar = ttk.Scrollbar(frame_tabla, orient=tk.VERTICAL, command=self.tabla_horarios.yview)
+        scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=self.tabla_horarios.yview)
         self.tabla_horarios.configure(yscrollcommand=scrollbar.set)
         
         # Posicionar elementos
-        self.tabla_horarios.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.tabla_horarios.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
         
     def crear_botones(self):
-        frame_botones = ttk.Frame(self.frame_principal)
-        frame_botones.grid(row=3, column=0, columnspan=2, pady=20)
+        frame_botones = ctk.CTkFrame(self.frame_principal)
+        frame_botones.pack(fill="x", padx=20, pady=20)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
             text="Actualizar",
-            command=self.actualizar_lista,
-            style="Accent.TButton"
-        ).grid(row=0, column=0, padx=5)
+            command=self.cargar_horarios,
+            width=200,
+            height=40,
+            corner_radius=10
+        ).pack(side="left", padx=10, expand=True)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
             text="Cerrar",
             command=self.root.destroy,
-            style="Danger.TButton"
-        ).grid(row=0, column=1, padx=5)
+            width=200,
+            height=40,
+            corner_radius=10,
+            fg_color="#FF5555",
+            hover_color="#FF3333"
+        ).pack(side="right", padx=10, expand=True)
         
+    def cargar_horarios(self):
+        """Carga todos los horarios en la tabla"""
+        try:
+            # Limpiar tabla
+            for item in self.tabla_horarios.get_children():
+                self.tabla_horarios.delete(item)
+                
+            # Obtener horarios de la base de datos
+            horarios = self.controlador_horario.listar_horarios()
+            
+            # Insertar cada horario en la tabla
+            for horario in horarios:
+                self.tabla_horarios.insert(
+                    "",
+                    "end",
+                    values=(
+                        horario.id_horario,
+                        horario.curso.nombre,
+                        horario.dia,
+                        horario.hora_inicio,
+                        horario.hora_fin,
+                        horario.curso.profesor,
+                        horario.aula
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al cargar horarios: {str(e)}")
+            
     def buscar_horarios(self):
-        # Aquí irá la lógica para buscar horarios
-        messagebox.showinfo("Búsqueda", "Buscando horarios...")
-        
-    def actualizar_lista(self):
-        # Aquí irá la lógica para actualizar la lista de horarios
-        messagebox.showinfo("Actualización", "Lista de horarios actualizada")
+        """Busca horarios según los filtros seleccionados"""
+        try:
+            # Obtener valores de los filtros
+            curso = self.filtro_curso.get()
+            dia = self.filtro_dia.get()
+            
+            # Limpiar tabla
+            for item in self.tabla_horarios.get_children():
+                self.tabla_horarios.delete(item)
+                
+            # Buscar horarios según los filtros
+            horarios = self.controlador_horario.buscar_horarios(
+                nombre_curso=curso if curso else None,
+                dia=dia if dia else None
+            )
+            
+            # Insertar resultados en la tabla
+            for horario in horarios:
+                self.tabla_horarios.insert(
+                    "",
+                    "end",
+                    values=(
+                        horario.id_horario,
+                        horario.curso.nombre,
+                        horario.dia,
+                        horario.hora_inicio,
+                        horario.hora_fin,
+                        horario.curso.profesor,
+                        horario.aula
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al buscar horarios: {str(e)}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = ctk.CTk()
     app = VistaConsultarHorarios(root)
     root.mainloop() 

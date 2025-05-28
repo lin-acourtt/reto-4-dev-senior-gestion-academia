@@ -18,4 +18,4 @@ if __name__ == "__main__":
     finally:
         db.close()
 
-# vídeo por 52:58
+# vídeo por 52:58  <<---  what? 

@@ -1,22 +1,29 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk, messagebox
+from config.appearance import centrar_ventana
+from controllers.matricula_controller import MatriculaController
 
 class VistaEliminarMatricula:
-    def __init__(self, root):
+    def __init__(self, root, db=None):
         self.root = root
+        self.db = db
+        self.controlador_matricula = MatriculaController(self.db)
+        
+        # Configurar la ventana
         self.root.title("Eliminar Matrícula")
-        self.root.geometry("600x400")
+        self.root.geometry("800x600")
+        centrar_ventana(self.root)
         
         # Frame principal
-        self.frame_principal = ttk.Frame(self.root, padding="20")
-        self.frame_principal.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.frame_principal = ctk.CTkFrame(self.root)
+        self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Título
-        ttk.Label(
+        ctk.CTkLabel(
             self.frame_principal,
             text="Eliminar Matrícula",
-            font=("Helvetica", 16, "bold")
-        ).grid(row=0, column=0, columnspan=2, pady=20)
+            font=("Helvetica", 24, "bold")
+        ).pack(pady=20)
         
         # Campos de búsqueda
         self.crear_campos_busqueda()
@@ -27,36 +34,53 @@ class VistaEliminarMatricula:
         # Botones
         self.crear_botones()
         
+        # Cargar datos iniciales
+        self.cargar_matriculas()
+        
     def crear_campos_busqueda(self):
-        frame_busqueda = ttk.LabelFrame(self.frame_principal, text="Buscar Matrícula", padding="10")
-        frame_busqueda.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
+        # Frame para los campos de búsqueda
+        frame_busqueda = ctk.CTkFrame(self.frame_principal)
+        frame_busqueda.pack(fill="x", padx=20, pady=10)
+        
+        # Título de la sección
+        ctk.CTkLabel(
+            frame_busqueda,
+            text="Buscar Matrícula",
+            font=("Helvetica", 16, "bold")
+        ).pack(pady=10)
+        
+        # Frame para los campos
+        frame_campos = ctk.CTkFrame(frame_busqueda)
+        frame_campos.pack(fill="x", padx=20, pady=10)
         
         # Búsqueda por estudiante
-        ttk.Label(frame_busqueda, text="Estudiante:").grid(row=0, column=0, padx=5)
-        self.busqueda_estudiante = ttk.Combobox(frame_busqueda, width=30)
-        self.busqueda_estudiante.grid(row=0, column=1, padx=5)
+        ctk.CTkLabel(frame_campos, text="Estudiante:").pack(side="left", padx=5)
+        self.busqueda_estudiante = ctk.CTkComboBox(frame_campos, width=200)
+        self.busqueda_estudiante.pack(side="left", padx=5)
         
         # Búsqueda por curso
-        ttk.Label(frame_busqueda, text="Curso:").grid(row=0, column=2, padx=5)
-        self.busqueda_curso = ttk.Combobox(frame_busqueda, width=30)
-        self.busqueda_curso.grid(row=0, column=3, padx=5)
+        ctk.CTkLabel(frame_campos, text="Curso:").pack(side="left", padx=5)
+        self.busqueda_curso = ctk.CTkComboBox(frame_campos, width=200)
+        self.busqueda_curso.pack(side="left", padx=5)
         
         # Botón de búsqueda
-        ttk.Button(
-            frame_busqueda,
+        ctk.CTkButton(
+            frame_campos,
             text="Buscar",
             command=self.buscar_matricula,
-            style="Accent.TButton"
-        ).grid(row=0, column=4, padx=5)
+            width=100,
+            height=30,
+            corner_radius=10
+        ).pack(side="left", padx=5)
         
     def crear_tabla_matriculas(self):
         # Frame para la tabla
-        frame_tabla = ttk.Frame(self.frame_principal)
-        frame_tabla.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S))
+        frame_tabla = ctk.CTkFrame(self.frame_principal)
+        frame_tabla.pack(fill="both", expand=True, padx=20, pady=10)
         
         # Crear Treeview
         columnas = ("id", "estudiante", "curso", "fecha_matricula")
-        self.tabla_matriculas = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
+        self.tabla_matriculas = ttk.Treeview(frame_tabla, columns=columnas, show="headings", height=15)
         
         # Definir encabezados
         self.tabla_matriculas.heading("id", text="ID")
@@ -65,48 +89,134 @@ class VistaEliminarMatricula:
         self.tabla_matriculas.heading("fecha_matricula", text="Fecha de Matrícula")
         
         # Configurar columnas
-        self.tabla_matriculas.column("id", width=50)
-        self.tabla_matriculas.column("estudiante", width=200)
-        self.tabla_matriculas.column("curso", width=200)
+        self.tabla_matriculas.column("id", width=50, anchor="center")
+        self.tabla_matriculas.column("estudiante", width=250)
+        self.tabla_matriculas.column("curso", width=250)
         self.tabla_matriculas.column("fecha_matricula", width=150)
         
         # Scrollbar
-        scrollbar = ttk.Scrollbar(frame_tabla, orient=tk.VERTICAL, command=self.tabla_matriculas.yview)
+        scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=self.tabla_matriculas.yview)
         self.tabla_matriculas.configure(yscrollcommand=scrollbar.set)
         
         # Posicionar elementos
-        self.tabla_matriculas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.tabla_matriculas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
         
     def crear_botones(self):
-        frame_botones = ttk.Frame(self.frame_principal)
-        frame_botones.grid(row=3, column=0, columnspan=2, pady=20)
+        frame_botones = ctk.CTkFrame(self.frame_principal)
+        frame_botones.pack(fill="x", padx=20, pady=20)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
-            text="Eliminar Seleccionado",
-            command=self.eliminar_matricula,
-            style="Danger.TButton"
-        ).grid(row=0, column=0, padx=5)
+            text="Eliminar Seleccionada",
+            command=self.eliminar_matricula_seleccionada,
+            width=200,
+            height=40,
+            corner_radius=10,
+            fg_color="#FF5555",
+            hover_color="#FF3333"
+        ).pack(side="left", padx=10, expand=True)
         
-        ttk.Button(
+        ctk.CTkButton(
             frame_botones,
-            text="Cancelar",
+            text="Cerrar",
             command=self.root.destroy,
-            style="Accent.TButton"
-        ).grid(row=0, column=1, padx=5)
+            width=200,
+            height=40,
+            corner_radius=10
+        ).pack(side="right", padx=10, expand=True)
         
+    def cargar_matriculas(self):
+        """Carga todas las matrículas en la tabla"""
+        try:
+            # Limpiar tabla
+            for item in self.tabla_matriculas.get_children():
+                self.tabla_matriculas.delete(item)
+                
+            # Obtener matrículas de la base de datos
+            matriculas = self.controlador_matricula.listar_matriculas()
+            
+            # Insertar cada matrícula en la tabla
+            for matricula in matriculas:
+                self.tabla_matriculas.insert(
+                    "",
+                    "end",
+                    iid=matricula.id_matricula,
+                    values=(
+                        matricula.id_matricula,
+                        f"{matricula.estudiante.nombre} {matricula.estudiante.apellido}",
+                        matricula.curso.nombre,
+                        matricula.fecha_matricula
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al cargar matrículas: {str(e)}")
+            
     def buscar_matricula(self):
-        # Aquí irá la lógica para buscar matrículas
-        messagebox.showinfo("Búsqueda", "Buscando matrículas...")
-        
-    def eliminar_matricula(self):
-        # Aquí irá la lógica para eliminar la matrícula seleccionada
-        if messagebox.askyesno("Confirmar", "¿Está seguro de eliminar esta matrícula?"):
-            messagebox.showinfo("Éxito", "Matrícula eliminada exitosamente")
-            self.root.destroy()
+        """Busca matrículas según los filtros seleccionados"""
+        try:
+            # Obtener valores de los filtros
+            estudiante = self.busqueda_estudiante.get()
+            curso = self.busqueda_curso.get()
+            
+            # Limpiar tabla
+            for item in self.tabla_matriculas.get_children():
+                self.tabla_matriculas.delete(item)
+                
+            # Buscar matrículas según los filtros
+            matriculas = self.controlador_matricula.buscar_matriculas(
+                nombre_estudiante=estudiante if estudiante else None,
+                nombre_curso=curso if curso else None
+            )
+            
+            # Insertar resultados en la tabla
+            for matricula in matriculas:
+                self.tabla_matriculas.insert(
+                    "",
+                    "end",
+                    iid=matricula.id_matricula,
+                    values=(
+                        matricula.id_matricula,
+                        f"{matricula.estudiante.nombre} {matricula.estudiante.apellido}",
+                        matricula.curso.nombre,
+                        matricula.fecha_matricula
+                    )
+                )
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al buscar matrículas: {str(e)}")
+            
+    def eliminar_matricula_seleccionada(self):
+        """Elimina la matrícula seleccionada de la tabla"""
+        try:
+            # Obtener la selección
+            seleccion = self.tabla_matriculas.selection()
+            if not seleccion:
+                messagebox.showwarning("Advertencia", "Por favor, seleccione una matrícula para eliminar")
+                return
+                
+            # Obtener datos de la matrícula seleccionada
+            matricula_id = int(seleccion[0])
+            estudiante = self.tabla_matriculas.item(seleccion[0])['values'][1]
+            curso = self.tabla_matriculas.item(seleccion[0])['values'][2]
+            
+            # Confirmar eliminación
+            if messagebox.askyesno(
+                "Confirmar Eliminación",
+                f"¿Está seguro de eliminar la matrícula del estudiante {estudiante} en el curso {curso}?"
+            ):
+                # Eliminar la matrícula
+                if self.controlador_matricula.eliminar_matricula(matricula_id):
+                    messagebox.showinfo("Éxito", "Matrícula eliminada exitosamente")
+                    self.cargar_matriculas()  # Recargar la tabla
+                else:
+                    messagebox.showerror("Error", "No se pudo eliminar la matrícula")
+                    
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al eliminar la matrícula: {str(e)}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = ctk.CTk()
     app = VistaEliminarMatricula(root)
     root.mainloop() 
