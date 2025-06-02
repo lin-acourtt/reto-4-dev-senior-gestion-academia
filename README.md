@@ -5,6 +5,7 @@
 
 Tareas:
 | Completado | Tarea | Se hace en |
+| --- | --- | --- |
 | Sí | Registrar nuevos estudiantes | Estudiantes |
 | Sí | Consultar información de estudiantes | Estudiantes | 
 | Sí | Registrar profesores | Profesores | 
