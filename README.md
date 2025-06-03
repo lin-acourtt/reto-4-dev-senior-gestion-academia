@@ -9,9 +9,9 @@ Tareas:
 | Sí | Registrar nuevos estudiantes | Estudiantes |
 | Sí | Consultar información de estudiantes | Estudiantes | 
 | Sí | Registrar profesores | Profesores | 
-| | Ver qué cursos dicta un profesor |  Profesores  | 
+| si| Ver qué cursos dicta un profesor |  Profesores  | 
 | Sí | Crear cursos y asignarles un profesor responsable. | Cursos |
-| | Registrar uno o varios horarios para cada curso. |  Cursos y horarios  |
+|Santiago| Registrar uno o varios horarios para cada curso. |  Cursos y horarios  |
 | Lidnsey | Matricular estudiantes en cursos específicos. |  Matrículas  | 
 | | Consultar los cursos en los que está inscrito un estudiante. |  Estudiantes  |
 | | Consultar los estudiantes inscritos en un curso. |  Cursos  |
