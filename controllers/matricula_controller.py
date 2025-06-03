@@ -61,7 +61,7 @@ class MatriculaController:
             WHERE id_matricula= %s
         """
         params = (estudiante_id,curso_id,fecha_matricula,id_matricula)
-        resultado = self.db.execute_select(sql, params)
+        resultado = self.db.execute_query(sql, params)
 
     def eliminar_matricula_por_id(self, id_matricula):
         """
