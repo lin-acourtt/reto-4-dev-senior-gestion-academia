@@ -18,6 +18,7 @@ from .frame_principal import FramePrincipal
 from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudiante
 from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
 from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
+from view.view_Tkinter.vista_horario.menu_horario import VentanaMenuHorario
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -81,7 +82,11 @@ class VentanaMenuPrincipal(ctk.CTk):
         
         
     def abrir_ventana_horarios(self):
-        print("Ventana horarios")
+        """Abre la ventana para operaciones con horarios"""
+        self.destroy()
+        ventana_horarios = VentanaMenuHorario(db=self.db)
+        ventana_horarios.iniciar_ventana(self.tema_actual)
+        
 
     def abrir_ventana_matriculas(self):
         print("Ventana matrículas")

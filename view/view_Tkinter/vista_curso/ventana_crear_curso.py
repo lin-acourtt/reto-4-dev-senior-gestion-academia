@@ -178,7 +178,6 @@ class VentanaCrearCurso(ctk.CTk):
         self.cobox_profesor.configure(values=self.lista_profesores)
         if self.tipo == 1:
             # Ventana de creación de curso
-            self.cobox_profesor.set("test")
             self.cobox_profesor.set(self.lista_profesores[0])
         if self.tipo == 2:
             # Ventana de actualización de curso
