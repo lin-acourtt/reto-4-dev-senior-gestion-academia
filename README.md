@@ -12,8 +12,8 @@ Tareas:
 | | Ver qué cursos dicta un profesor |  Profesores  | 
 | Sí | Crear cursos y asignarles un profesor responsable. | Cursos |
 | | Registrar uno o varios horarios para cada curso. |  Cursos y horarios  |
-| | Matricular estudiantes en cursos específicos. |  Matrículas  | 
+| Lidnsey | Matricular estudiantes en cursos específicos. |  Matrículas  | 
 | | Consultar los cursos en los que está inscrito un estudiante. |  Estudiantes  |
 | | Consultar los estudiantes inscritos en un curso. |  Cursos  |
 | | Consultar los horarios asignados a un curso. |  Cursos  |
-| | Eliminar matrículas sin afectar la información de los estudiantes ni de los cursos. | Matrículas |
+| Lindsey | Eliminar matrículas sin afectar la información de los estudiantes ni de los cursos. | Matrículas |
