@@ -1,5 +1,6 @@
 import customtkinter as ctk
-import tkinter as ttk
+from tkinter import ttk
+from tkinter import messagebox
 from config.appearance import centrar_ventana
 
 class VentanaCursosProfesor(ctk.CTk):
@@ -25,6 +26,9 @@ class VentanaCursosProfesor(ctk.CTk):
         centrar_ventana(self,proporcion=0.7)
         self.resizable(False, False)
 
+        # Configurar el protocolo de cierre de ventana
+        self.protocol("WM_DELETE_WINDOW", self.cerrar_ventana)
+
         self.label_titulo = ctk.CTkLabel(
             self, 
             text=f"Cursos impartidos por {self.nombre_sel} {self.apellido_sel}",
@@ -39,7 +43,7 @@ class VentanaCursosProfesor(ctk.CTk):
         # Tabla de cursos
         self.tabla_cursos_prof = ttk.Treeview(
             self.frame_tabla,
-            columns=("ID", "Nombre", "Descripción", "Duración", "Nivel"),
+            columns=("ID", "Nombre", "Descripción", "Duración", "Horarios"),
             show="headings"
         )
         self.tabla_cursos_prof.pack(pady=10, padx=10, fill="both", expand=True)
@@ -49,14 +53,14 @@ class VentanaCursosProfesor(ctk.CTk):
         self.tabla_cursos_prof.heading("Nombre", text="Nombre del Curso")
         self.tabla_cursos_prof.heading("Descripción", text="Descripción")
         self.tabla_cursos_prof.heading("Duración", text="Duración (horas)")
-        self.tabla_cursos_prof.heading("Nivel", text="Nivel")
+        self.tabla_cursos_prof.heading("Horarios", text="Horarios")
         
         # Ajustar anchos de columna
         self.tabla_cursos_prof.column("ID", width=100)
         self.tabla_cursos_prof.column("Nombre", width=200)
         self.tabla_cursos_prof.column("Descripción", width=250)
         self.tabla_cursos_prof.column("Duración", width=100)
-        self.tabla_cursos_prof.column("Nivel", width=100)
+        self.tabla_cursos_prof.column("Horarios", width=200)
         
         # Scrollbar
         scrollbar = ttk.Scrollbar(self.frame_tabla, orient="vertical", command=self.tabla_cursos_prof.yview)
@@ -67,7 +71,7 @@ class VentanaCursosProfesor(ctk.CTk):
         self.btn_cerrar = ctk.CTkButton(
             self,
             text="Cerrar",
-            command=self.destroy,
+            command=self.cerrar_ventana,
             width=200
         )
         self.btn_cerrar.pack(pady=10)
@@ -88,24 +92,22 @@ class VentanaCursosProfesor(ctk.CTk):
         self.especialidad_sel = self.parent.frame_tabla_profesores.tabla_profesores.item(self.iid_sel)['values'][5]
     
     def cargar_cursos_docente(self):
-        return
-    
         try:
             # Obtener cursos del profesor
             cursos = self.parent.controlador_profesor.obtener_cursos_profesor(self.iid_sel)
             
             # Limpiar tabla
-            for row in self.tabla.get_children():
-                self.tabla.delete(row)
+            for row in self.tabla_cursos_prof.get_children():
+                self.tabla_cursos_prof.delete(row)
             
             # Insertar cursos
             for curso in cursos:
-                self.tabla.insert("", "end", values=(
+                self.tabla_cursos_prof.insert("", "end", values=(
                     curso.id_curso,
                     curso.nombre,
                     curso.descripcion,
-                    curso.duracion,
-                    curso.nivel
+                    curso.duracion_horas,
+                    curso.horarios  # Cambiamos nivel por horarios
                 ))
                 
             if not cursos:
@@ -113,3 +115,10 @@ class VentanaCursosProfesor(ctk.CTk):
                 
         except Exception as e:
             messagebox.showerror("Error", f"Error al cargar los cursos: {str(e)}")
+
+    def cerrar_ventana(self):
+        """
+            Actualiza el estado de la ventana en el padre y cierra la ventana
+        """
+        self.parent.ventana_cursos_esta_abierta = False
+        self.destroy()

@@ -112,10 +112,10 @@ class VentanaMenuPrincipal(ctk.CTk):
             if self.db:
                 self.db.close()
             # Destruir la ventana principal
-            sys.exit()
+            sys.exit(0)
         except Exception as e:
             print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error
             self.quit()
-            sys.exit()
+            sys.exit(1)
 
