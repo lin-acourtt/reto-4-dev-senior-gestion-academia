@@ -2,6 +2,7 @@ import customtkinter as ctk
 from customtkinter import CTkFrame
 from .frame_botones_header import FrameBotonesHeader
 
+# Menú Estudiantes
 class FrameHeader(CTkFrame):
     def __init__(self, master_header):
         """

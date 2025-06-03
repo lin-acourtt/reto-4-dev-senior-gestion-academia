@@ -1,6 +1,5 @@
 import customtkinter as ctk
-from .msgbox_estudiantes import msg_sin_cambios, msg_registro_exitoso
-from CTkMessagebox import CTkMessagebox
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_sin_cambios, msg_registro_exitoso, msg_error_campos_vacios, msg_entrada_duplicada, msg_error_integrity, msg_error_inesperado
 from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 
@@ -14,12 +13,15 @@ class VentanaActualizarEstudiante(ctk.CTk):
         
         row_number = 0
 
-        centrar_ventana(self,proporcion=0.3)
+        centrar_ventana(self,0.25,0.35)
+        self.resizable(False, False)
         self.title("Actualizar estudiante")
         self.label_titulo = ctk.CTkLabel(self, text="Actualización de estudiante",font=("Helvetica", 14, "bold"))
-        self.label_titulo.grid(row = row_number, column = 0, columnspan=2)
+        self.label_titulo.grid(row = row_number, column = 0, columnspan=2,pady=(10,10))
 
-    
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
         self.strvar_nombre = ctk.StringVar(self,"")
         self.strvar_apellido = ctk.StringVar(self,"")
         self.strvar_correo = ctk.StringVar(self,"")
@@ -30,36 +32,36 @@ class VentanaActualizarEstudiante(ctk.CTk):
         
         row_number +=1
         self.label_nombre = ctk.CTkLabel(self, text="Nombre:")
-        self.label_nombre.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.label_nombre.grid(row = row_number, column = 0, padx=20, pady=(5,5))
         self.entry_nombre = ctk.CTkEntry(self, textvariable=self.strvar_nombre)
-        self.entry_nombre.grid(row = row_number, column = 1, padx=20, pady=5)
+        self.entry_nombre.grid(row = row_number, column = 1, padx=(20,30), pady=(5,5), sticky="ew")
 
         row_number +=1
         self.label_apellido = ctk.CTkLabel(self, text="Apellido:")
-        self.label_apellido.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.label_apellido.grid(row = row_number, column = 0, padx=20, pady=(5,5))
         self.entry_apellido = ctk.CTkEntry(self, textvariable=self.strvar_apellido)
-        self.entry_apellido.grid(row = row_number, column = 1, padx=20, pady=5)
+        self.entry_apellido.grid(row = row_number, column = 1, padx=(20,30), pady=(5,5), sticky="ew")
 
         row_number +=1
         self.label_correo = ctk.CTkLabel(self, text="Correo:")
-        self.label_correo.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.label_correo.grid(row = row_number, column = 0, padx=20, pady=(5,5))
         self.entry_correo = ctk.CTkEntry(self, textvariable=self.strvar_correo)
-        self.entry_correo.grid(row = row_number, column = 1, padx=20, pady=5)
+        self.entry_correo.grid(row = row_number, column = 1, padx=(20,30), pady=(5,5), sticky="ew")
 
         row_number +=1
         self.label_telefono = ctk.CTkLabel(self, text="Teléfono:")
-        self.label_telefono.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.label_telefono.grid(row = row_number, column = 0, padx=20, pady=(5,5))
         self.entry_telefono = ctk.CTkEntry(self, textvariable=self.strvar_tel)
-        self.entry_telefono.grid(row = row_number, column = 1, padx=20, pady=5)
+        self.entry_telefono.grid(row = row_number, column = 1, padx=(20,30), pady=(5,5), sticky="ew")
 
         row_number +=1
         self.btn_guardar = ctk.CTkButton(self, text="Actualizar", command=lambda: self.guardar_registro(self.iid_sel))
-        self.btn_guardar.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(30,30), pady=(15,15))
         
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_actualizacion)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=20, pady=5)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(30,30), pady=(15,15))
 
-        self.protocol("WM_DELETE_WINDOW", self.actualizar_estado_ventana_al_cerrar)
+        self.protocol("WM_DELETE_WINDOW", self.cancelar_actualizacion)
 
     def actualizar_informacion_campos(self):
         """
@@ -101,18 +103,23 @@ class VentanaActualizarEstudiante(ctk.CTk):
         
 
     def guardar_registro(self,id_sel):
-        # Obtener los datos en los elementos de "Entry"
-        nombre = self.entry_nombre.get()
-        apellido = self.entry_apellido.get()
-        correo = self.entry_correo.get()
-        telefono = self.entry_telefono.get()
-
-        if (str(nombre)==str(self.nombre_sel)) and (str(apellido) == str(self.apellido_sel)) and (str(correo) == str(self.correo_sel)) and (str(telefono) == str(self.telefono_sel)):
-            # Se regresa y no se hace ningún cambio
-            self.cancelar_actualizacion()
-            return
-
         try:
+            # Obtener los datos en los elementos de "Entry"
+            nombre = self.entry_nombre.get().strip()
+            apellido = self.entry_apellido.get().strip()
+            correo = self.entry_correo.get().strip()
+            telefono = self.entry_telefono.get().strip()
+
+            # Validar campos
+            if not all([nombre, apellido, correo, telefono]):
+                msg_error_campos_vacios()
+                return
+            
+            if (str(nombre)==str(self.nombre_sel)) and (str(apellido) == str(self.apellido_sel)) and (str(correo) == str(self.correo_sel)) and (str(telefono) == str(self.telefono_sel)):
+                # Se regresa y no se hace ningún cambio
+                self.cancelar_actualizacion()
+                return
+
             # Utilizar el controlador de estudiante para actualizar los datos de dicho estudiante
             self.parent.controlador_estudiante.actualizar_estudiante_por_id(id_sel,nombre,apellido,correo,telefono)
             
@@ -129,13 +136,15 @@ class VentanaActualizarEstudiante(ctk.CTk):
             )
 
             # Mostrar un mensaje de confirmación
-            msg_registro_exitoso()
+            msg_registro_exitoso("Estudiante")
             self.actualizar_estado_ventana_al_cerrar()
         except IntegrityError as e:
-            print(f"Error de integridad: {e.msg}")
-        except Exception as e: 
-            print(f"Error al registrar el estudiante: {str(e)}")
-
+            if "Duplicate entry" in str(e):
+                msg_entrada_duplicada("estudiante")
+            else:
+                msg_error_integrity("estudiante",str(e))
+        except Exception as e:
+            msg_error_inesperado(str(e))
 
     def cancelar_actualizacion(self):
         msg_sin_cambios()

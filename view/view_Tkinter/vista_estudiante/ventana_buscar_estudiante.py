@@ -1,30 +1,32 @@
 import customtkinter as ctk
-from .msgbox_estudiantes import msg_no_encontrado
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_id_no_encontrado
 from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 
 class VentanaBuscarEstudiante(ctk.CTk):
     """
-        Inicializa la ventana para registrar estudiantes.
+        Inicializa la ventana para buscar estudiantes.
     """
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
 
         self.id_input_dialog = ctk.CTkInputDialog(text="ID:", title="Escriba ID a buscar")
-        centrar_ventana(self.id_input_dialog,0.3,0.2)
+        centrar_ventana(self.id_input_dialog,0.2,0.2)
         self.id_a_buscar = self.id_input_dialog.get_input()
+
         if self.id_a_buscar:
             
             # obtener la lista de IDs
             lista_ids = self.obtener_lista_ids_estudiante()
 
             if self.id_a_buscar in lista_ids:
+                
+                # Si la ventana de buscar está cerrada, cambiar su atributo a "True" y abrir la ventana
+                self.parent.ventana_buscar_esta_abierta = True
                 self.mostrar_detalles_estudiante()
             else:
-                msg_no_encontrado(self.id_a_buscar)
-        else:
-            print("Ninguno")
+                msg_id_no_encontrado(self.id_a_buscar)
     
     def obtener_lista_ids_estudiante(self):
         """
@@ -39,20 +41,24 @@ class VentanaBuscarEstudiante(ctk.CTk):
             if estudiante:
                 return estudiante
             else:
-                print("Estudiante no encontrado")
+                #print("Estudiante no encontrado")
                 return
         except Exception as e:
-            print(f"Error del estudiante: {str(e)}")
+            pass
+            #print(f"Error del estudiante: {str(e)}")
     
     def mostrar_detalles_estudiante(self):
         estudiante = self.obtener_detalles_estudiante_por_id()
 
         self.ventana_resultados = ctk.CTk()
-        centrar_ventana(self.ventana_resultados,proporcion=0.3)
+        centrar_ventana(self.ventana_resultados,0.25,0.35)
+        self.ventana_resultados.columnconfigure(0,weight=1)
+        self.ventana_resultados.columnconfigure(1,weight=1)
+
         self.ventana_resultados.title("Resultados de estudiante")
         row_number = 0
         self.label_titulo = ctk.CTkLabel(self.ventana_resultados, text=f"Detalle de estudiante con ID: {self.id_a_buscar}",font=("Helvetica", 14, "bold"))
-        self.label_titulo.grid(row = row_number, column = 0, columnspan=2)
+        self.label_titulo.grid(row = row_number, column = 0, columnspan=2, pady=(10,10))
         
         row_number +=1
         self.label_nombre = ctk.CTkLabel(self.ventana_resultados, text="Nombre:")
@@ -79,10 +85,14 @@ class VentanaBuscarEstudiante(ctk.CTk):
         self.entry_telefono.grid(row = row_number, column = 1, padx=20, pady=5)
 
         row_number +=1
-        self.btn_ok = ctk.CTkButton(self.ventana_resultados, text="OK", command=lambda: self.ventana_resultados.destroy())
-        self.btn_ok.grid(row = row_number, column = 0, padx=20, pady=5)
+        self.btn_ok = ctk.CTkButton(self.ventana_resultados, text="OK", command=self.cerrar_resultados)
+        self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=10)
 
         self.ventana_resultados.mainloop()
+
+    def cerrar_resultados(self):
+        self.parent.ventana_buscar_esta_abierta = False
+        self.ventana_resultados.destroy()
         
         
         
