@@ -1,3 +1,4 @@
+import sys
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os
@@ -16,8 +17,8 @@ from config.appearance import centrar_ventana
 from .frame_principal import FramePrincipal
 
 from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudiante
-from view.view_Tkinter.vista_profesor.vista_menu_profesor import MenuDocenteFull
-from view.view_Tkinter.vista_curso.vista_menu_curso import VistaMenuCurso
+from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
+from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -70,14 +71,14 @@ class VentanaMenuPrincipal(ctk.CTk):
             Para esto, se cierra el menú principal.
         """
         self.destroy()
-        ventana_docentes = MenuDocenteFull(db=self.db, tema_actual=self.tema_actual)
-        ventana_docentes.root.mainloop()
+        ventana_menu_profesores = VentanaMenuProfesor(db=self.db)
+        ventana_menu_profesores.iniciar_ventana(self.tema_actual)
 
     def abrir_ventana_cursos(self):
         """Abre la ventana para operaciones con cursos"""
         self.destroy()
-        ventana_cursos = VistaMenuCurso(db=self.db, tema_actual=self.tema_actual)
-        ventana_cursos.iniciar_ventana()
+        ventana_cursos = VentanaMenuCurso(db=self.db)
+        ventana_cursos.iniciar_ventana(self.tema_actual)
         
         
     def abrir_ventana_horarios(self):
@@ -105,15 +106,16 @@ class VentanaMenuPrincipal(ctk.CTk):
         """
         try:
             # Cerrar la conexión a la base de datos si existe
+            print("cerrando")
             self.quit()
             self.destroy()
             if self.db:
                 self.db.close()
-            # Terminar el proceso del programa
-            sys.exit(0)
+            # Destruir la ventana principal
+            sys.exit()
         except Exception as e:
             print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error
             self.quit()
-            sys.exit(1)
+            sys.exit()
 

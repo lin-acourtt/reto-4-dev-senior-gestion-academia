@@ -1,10 +1,9 @@
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
 from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_eliminacion_exitosa, msg_sin_cambios, msg_error_integrity,  msg_error_inesperado
 
-class VentanaBorrarEstudiante(ctk.CTk):
+class VentanaBorrarCurso(ctk.CTk):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
@@ -15,13 +14,13 @@ class VentanaBorrarEstudiante(ctk.CTk):
         self.columnconfigure(1,weight=1)
 
         self.title("Confirmación")
-        self.label_titulo = ctk.CTkLabel(self, text="Borrar estudiante",font=("Helvetica", 14, "bold"))
+        self.label_titulo = ctk.CTkLabel(self, text="Borrar curso",font=("Helvetica", 14, "bold"))
         #self.label_titulo.grid(row = 0, column = 0, columnspan=2)
         self.label_titulo.pack(pady=10)
 
-        # Se obtienen el ID del estudiante seleccionado en la tabla
-        iid_sel = self.parent.frame_tabla_estudiantes.tabla_estudiantes.selection()[0]
-        self.label_msj = ctk.CTkLabel(self, text=f"¿Acepta borrar el estudiante con ID: {iid_sel}?")
+        # Se obtienen el ID del curso seleccionado en la tabla
+        iid_sel = self.parent.frame_tabla_cursos.tabla_cursos.selection()[0]
+        self.label_msj = ctk.CTkLabel(self, text=f"¿Acepta borrar el curso con ID: {iid_sel}?")
         #self.label_msj.grid(row = 1, column = 0, columnspan=2)
         self.label_msj.pack(pady=10)
         
@@ -42,19 +41,19 @@ class VentanaBorrarEstudiante(ctk.CTk):
     def confirmar_borrado(self,id_sel):
 
         try:
-            # Se utiliza el controlador estudiante para eliminar un estudiante por el ID especificado
-            self.parent.controlador_estudiante.eliminar_estudiante_por_id(id_sel)
+            # Se utiliza el controlador curso para eliminar un curso por el ID especificado
+            self.parent.controlador_curso.eliminar_curso(id_sel)
             
             # Actualizar tabla en el tree view
-            self.parent.frame_tabla_estudiantes.tabla_estudiantes.delete(id_sel)
+            self.parent.frame_tabla_cursos.tabla_cursos.delete(id_sel)
             
             # Dar un mensaje de confirmación
-            msg_eliminacion_exitosa("Estudiante")
+            msg_eliminacion_exitosa("curso")
             self.actualizar_estado_ventana_al_cerrar()
         except IntegrityError as e:
-            msg_error_integrity("estudiante",str(e.msg))
+            msg_error_integrity("curso",str(e.msg))
         except Exception as e: 
-            msg_error_inesperado("estudiante",str(e))
+            msg_error_inesperado("curso",str(e))
 
     def cancelar_borrado(self):
         msg_sin_cambios()

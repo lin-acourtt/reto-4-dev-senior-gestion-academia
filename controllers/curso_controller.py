@@ -17,18 +17,19 @@ class CursoController:
         Registra un nuevo curso en la base de datos
         Args:
             nombre: Nombre del curso
-            id_profesor: ID del profesor asignado
             descripcion: Descripción detallada del curso
             duracion_horas: Duración total del curso en horas
+            id_profesor: ID del profesor asignado
         Returns:
             bool: True si se registró exitosamente, False en caso contrario
         """
         try:
-            query = """
-                INSERT INTO cursos (nombre, profesor_id, descripcion, duracion_horas) 
-                VALUES (%s, %s, %s, %s)
+            sql = """
+                INSERT INTO cursos (nombre,descripcion,duracion_horas,profesor_id)
+                VALUES (%s,%s,%s,%s);
             """
-            self.db.execute_query(query, (nombre, id_profesor, descripcion, duracion_horas))
+            params=(nombre,descripcion,duracion_horas,id_profesor)
+            self.db.execute_query(sql,params)
             return True
         except Exception as e:
             print(f"Error al registrar curso: {str(e)}")
@@ -77,8 +78,9 @@ class CursoController:
             return cursos
             
         except Exception as e:
-            print(f"Error al listar cursos: {str(e)}")
-            return []
+            raise Exception
+            #print(f"Error al listar cursos: {str(e)}")
+            #return []
 
     def obtener_curso_por_id(self, id_curso):
         """

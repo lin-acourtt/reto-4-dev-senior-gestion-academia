@@ -2,6 +2,7 @@ import customtkinter as ctk
 from customtkinter import CTkFrame
 from tkinter.constants import DISABLED, NORMAL 
 
+# Menú Estudiantes
 class FrameFooter(CTkFrame):
     def __init__(self, master):
         """

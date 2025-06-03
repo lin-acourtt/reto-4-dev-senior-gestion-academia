@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from .msgbox_estudiantes import msg_registro_cancelado, msg_registro_exitoso
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_sin_cambios, msg_registro_exitoso, msg_error_campos_vacios, msg_entrada_duplicada, msg_error_integrity, msg_error_inesperado
 from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 
@@ -11,10 +11,15 @@ class VentanaRegistrarEstudiante(ctk.CTk):
         super().__init__()
         self.parent = parent
         
-        centrar_ventana(self,proporcion=0.25)
+        centrar_ventana(self,0.27,0.3)
+        self.resizable(False, False)
         self.title("Registro de estudiantes")
-        self.label_titulo = ctk.CTkLabel(self, text="Registro de estudiantes")
-        self.label_titulo.grid(row = 0, column = 0, columnspan=2)
+
+        self.columnconfigure(0,weight=1)
+        self.columnconfigure(1,weight=1)
+
+        self.label_titulo = ctk.CTkLabel(self, text="Registro de estudiantes",font=("Helvetica", 14, "bold"))
+        self.label_titulo.grid(row = 0, column = 0, columnspan=2,pady=(10,10))
 
         self.entry_nombre = ctk.CTkEntry(self, placeholder_text="Nombre")
         self.entry_nombre.grid(row = 1, column = 0, padx=20, pady=5)
@@ -29,24 +34,29 @@ class VentanaRegistrarEstudiante(ctk.CTk):
         self.entry_telefono.grid(row = 4, column = 0, padx=20, pady=5)
 
         self.btn_guardar = ctk.CTkButton(self, text="Guardar", command=self.guardar_registro)
-        self.btn_guardar.grid(row = 2, column = 1)
+        self.btn_guardar.grid(row = 2, column = 1, padx=(0,20))
         
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
-        self.btn_cancelar.grid(row = 3, column = 1)
+        self.btn_cancelar.grid(row = 3, column = 1, padx=(0,20))
 
-        self.protocol("WM_DELETE_WINDOW", self.actualizar_estado_ventana_al_cerrar)
+        self.protocol("WM_DELETE_WINDOW", self.cancelar_registro)
 
     def guardar_registro(self):
         """
             Actualiza la base de datos (tabla estudiantes), con la información del estudiante que se escribió en el formulario.
         """
-        # Obtener los datos en los elementos de "Entry"
-        nombre = self.entry_nombre.get()
-        apellido = self.entry_apellido.get()
-        correo = self.entry_correo.get()
-        telefono = self.entry_telefono.get()
+        try: 
+            # Obtener los datos en los elementos de "Entry"
+            nombre = self.entry_nombre.get().strip()
+            apellido = self.entry_apellido.get().strip()
+            correo = self.entry_correo.get().strip()
+            telefono = self.entry_telefono.get().strip()
 
-        try:
+            # Validar campos
+            if not all([nombre, apellido, correo, telefono]):
+                msg_error_campos_vacios()
+                return
+            
             # Utilizar el controlador de estudiante para registrar un nuevo estudiante
             self.parent.controlador_estudiante.registrar_estudiante(nombre, apellido, correo, telefono)
             
@@ -56,21 +66,24 @@ class VentanaRegistrarEstudiante(ctk.CTk):
             self.parent.frame_tabla_estudiantes.imprimir_informacion_en_tabla(estudiantes)
             
             # Mostrar un mensaje de registro exitoso
-            msg_registro_exitoso()
+            msg_registro_exitoso("Estudiante")
 
             # Cierra la ventana y cambia el estado de esta ventana a cerrado
             self.actualizar_estado_ventana_al_cerrar()
+        
         except IntegrityError as e:
-            print(f"Error de integridad: {e.msg}")
-        except Exception as e: 
-            print(f"Error al registrar el estudiante: {str(e)}")
-
+            if "Duplicate entry" in str(e):
+                msg_entrada_duplicada("estudiante")
+            else:
+                msg_error_integrity("estudiante",str(e))
+        except Exception as e:
+            msg_error_inesperado(str(e))
 
     def cancelar_registro(self):
         """
             Muestra un mensaje de alerta, y se cierra la ventana
         """
-        msg_registro_cancelado()
+        msg_sin_cambios()
         self.actualizar_estado_ventana_al_cerrar()
 
     def actualizar_estado_ventana_al_cerrar(self):
