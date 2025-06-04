@@ -19,6 +19,7 @@ class FrameFooter(CTkFrame):
         self.btn_buscar_estudiante = ctk.CTkButton(self, text="🔍 Buscar",command=self.master.abrir_ventana_buscar)
         self.btn_ver_matriculas_estudiante = ctk.CTkButton(self, text="🗎 Ver matrículas",state=DISABLED)
         self.btn_ver_horarios_estudiante = ctk.CTkButton(self, text="⏱️ Ver horarios",state=DISABLED)
+        self.btn_ver_cursos_estudiante = ctk.CTkButton(self, text="🧑‍🎓 Consultar cursos inscritos",state=DISABLED, command=self.master.abrir_consultar_cursos)
 
         self.btn_registrar_estudiante.grid(row=0,column=0, padx=5, pady=5)
         self.btn_actualizar_estudiante.grid(row=0,column=1, padx=5, pady=5)
@@ -26,15 +27,24 @@ class FrameFooter(CTkFrame):
         self.btn_buscar_estudiante.grid(row=0,column=3, padx=5, pady=5)
         self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
+        self.btn_ver_cursos_estudiante.grid(row=0,column=6, padx=5, pady=5)
 
     def actualizar_estado_de_botones(self):
-        """Actualiza el estado de los botones a continuación cuando hay un elemento en la tabla seleccionado"""
-        if self.botones_activos == False:
-            # Cambiar el estado a activos
-            self.botones_activos = True
-            self.btn_actualizar_estudiante.configure(state = NORMAL)
-            self.btn_eliminar_estudiante.configure(state = NORMAL)
-            self.btn_ver_matriculas_estudiante.configure(state = NORMAL)
-            self.btn_ver_horarios_estudiante.configure(state = NORMAL)
+        """Actualiza el estado de los botones según si hay un elemento seleccionado en la tabla"""
+        # Verificar si hay una selección en la tabla
+        seleccion = self.master.frame_tabla_estudiantes.tabla_estudiantes.selection()
+        
+        if seleccion:
+            # Si hay selección, activar los botones
+            self.btn_actualizar_estudiante.configure(state=NORMAL)
+            self.btn_eliminar_estudiante.configure(state=NORMAL)
+            self.btn_ver_matriculas_estudiante.configure(state=NORMAL)
+            self.btn_ver_horarios_estudiante.configure(state=NORMAL)
+            self.btn_ver_cursos_estudiante.configure(state=NORMAL)
         else:
-            return
+            # Si no hay selección, desactivar los botones
+            self.btn_actualizar_estudiante.configure(state=DISABLED)
+            self.btn_eliminar_estudiante.configure(state=DISABLED)
+            self.btn_ver_matriculas_estudiante.configure(state=DISABLED)
+            self.btn_ver_horarios_estudiante.configure(state=DISABLED)
+            self.btn_ver_cursos_estudiante.configure(state=DISABLED)

@@ -1,4 +1,3 @@
-
 #from config.database import Database
 from models.Matricula import Matricula
 
@@ -72,4 +71,55 @@ class MatriculaController:
         """
         params = (id_matricula,)
         resultado = self.db.execute_query(sql, params)
+
+    def obtener_cursos_por_estudiante(self, estudiante_id):
+        """
+        Obtiene todos los cursos en los que está inscrito un estudiante específico.
+        
+        Args:
+            estudiante_id (int): ID del estudiante del cual se quieren obtener los cursos
+            
+        Returns:
+            list: Lista de diccionarios con la información de los cursos
+        """
+        try:
+            query = """
+                SELECT 
+                    c.id_curso,
+                    c.nombre as nombre_curso,
+                    CONCAT(p.nombre, ' ', p.apellido) as profesor,
+                    c.descripcion,
+                    c.duracion_horas,
+                    GROUP_CONCAT(
+                        CONCAT(h.dia_semana, ' ', 
+                        TIME_FORMAT(h.hora_inicio, '%H:%i'), '-', 
+                        TIME_FORMAT(h.hora_fin, '%H:%i')
+                    ) SEPARATOR ', ') as horarios
+                FROM matriculas m
+                JOIN cursos c ON m.curso_id = c.id_curso
+                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
+                LEFT JOIN horarios h ON c.id_curso = h.curso_id
+                WHERE m.estudiante_id = %s
+                GROUP BY c.id_curso, c.nombre, profesor, c.descripcion, c.duracion_horas
+                ORDER BY c.nombre
+            """
+            resultados = self.db.execute_select(query, (estudiante_id,))
+            
+            cursos = []
+            for row in resultados:
+                curso = {
+                    'id_curso': row[0],
+                    'nombre': row[1],
+                    'profesor': row[2] if row[2] else "Sin profesor asignado",
+                    'descripcion': row[3] if row[3] else "Sin descripción",
+                    'duracion_horas': row[4] if row[4] else "No especificada",
+                    'horarios': row[5] if row[5] else "Sin horario asignado"
+                }
+                cursos.append(curso)
+                
+            return cursos
+            
+        except Exception as e:
+            print(f"Error al obtener cursos del estudiante: {str(e)}")
+            return []
 
