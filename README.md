@@ -13,7 +13,7 @@ Tareas:
 | Sí | Crear cursos y asignarles un profesor responsable. | Cursos |
 |si| Registrar uno o varios horarios para cada curso. |  Cursos y horarios  |
 | Sí | Matricular estudiantes en cursos específicos. |  Matrículas  | 
-| Santiago | Consultar los cursos en los que está inscrito un estudiante. |  Estudiantes  |
-| | Consultar los estudiantes inscritos en un curso. |  Cursos  |
+| si | Consultar los cursos en los que está inscrito un estudiante. |  Estudiantes  |
+| Santiago | Consultar los estudiantes inscritos en un curso. |  Cursos  |
 | | Consultar los horarios asignados a un curso. |  Cursos  |
 | Sí | Eliminar matrículas sin afectar la información de los estudiantes ni de los cursos. | Matrículas |
