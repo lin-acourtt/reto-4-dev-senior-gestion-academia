@@ -94,6 +94,14 @@ def msg_error_cargar_datos(tipo, mensaje):
             option_1="OK"
         )
 
+def msg_conflicto_horas():
+    CTkMessagebox(
+            title= "Error",
+            message= f"La hora de finalización de la clase no puede ser menor o igual a la hora de inicio.",
+            icon= "cancel",
+            option_1="OK"
+        )
+
 ################### Borrar
 def show_info():
     # Default messagebox for showing some information

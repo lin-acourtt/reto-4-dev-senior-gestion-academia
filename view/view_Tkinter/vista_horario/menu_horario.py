@@ -3,26 +3,28 @@ from tkinter import ttk, messagebox
 from config.appearance import centrar_ventana
 from config.database import Database
 
-from controllers.curso_controller import CursoController
+from controllers.horario_controller import HorarioController
 from controllers.profesor_controller import ProfesorController
+from controllers.curso_controller import CursoController
 
 from .frame_header import FrameHeader
-from .frame_tabla_cursos import FrameTablaCursos
+from .frame_tabla_horarios import FrameTablaHorarios
 from .frame_footer import FrameFooter
-from .vista_crear_curso import VistaCrearCurso
-from .vista_listar_cursos import VistaListarCursos
+"""from .vista_crear_horario import VistaCrearhorario
+from .vista_listar_horarios import VistaListarhorarios
 from .vista_matricular_estudiante import VistaMatricularEstudiante
 from .vista_consultar_matriculas import VistaConsultarMatriculas
 from .vista_consultar_horarios import VistaConsultarHorarios
 from .vista_eliminar_matricula import VistaEliminarMatricula
+"""
+from .ventana_crear_horario import VentanaCrearHorario
+from .ventana_borrar_horario import VentanaBorrarHorario
+from .ventana_buscar_horario import VentanaBuscarHorario
 
-from .ventana_crear_curso import VentanaCrearCurso
-from .ventana_borrar_curso import VentanaBorrarCurso
-from .ventana_buscar_curso import VentanaBuscarCurso
 
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
 
-class VentanaMenuCurso(ctk.CTkToplevel):
+class VentanaMenuHorario(ctk.CTkToplevel):
 
     def __init__(self, db: Database = None):
         """
@@ -32,15 +34,16 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         super().__init__()
         # El método constructor asegura que el atributo "db" sea de tipo "Database""
         self.db = db
+        self.controlador_horario = HorarioController(self.db)
+        #self.controlador_profesor = ProfesorController(self.db)
         self.controlador_curso = CursoController(self.db)
-        self.controlador_profesor = ProfesorController(self.db)
 
     def iniciar_ventana(self, tema_actual):    
         """
-            Inicia la ventana menú curso, requiere de:
+            Inicia la ventana menú horario, requiere de:
             - tema_actual: tema con el que se abrirá la ventana
         """
-        self.title("Gestión de Cursos - Academia")
+        self.title("Gestión de horarios - Academia")
         
         # Configurar el tema de la ventana
         ctk.set_appearance_mode(tema_actual)
@@ -54,9 +57,9 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         self.frame_header = FrameHeader(self)
         self.frame_header.pack(fill="x", padx=20, pady=10)
 
-        # Crear el frame de tabla cursos - Contiene la tabla y el scroller vertical
-        self.frame_tabla_cursos = FrameTablaCursos(self)
-        self.frame_tabla_cursos.pack(fill="both", expand=True, padx=20, pady=10)
+        # Crear el frame de tabla horarios - Contiene la tabla y el scroller vertical
+        self.frame_tabla_horarios = FrameTablaHorarios(self)
+        self.frame_tabla_horarios.pack(fill="both", expand=True, padx=20, pady=10)
 
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
@@ -66,19 +69,19 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         self.protocol("WM_DELETE_WINDOW",self.regresar_menu_principal)
 
         # Trackear estado (abiertas o cerradas) de ventanas de operaciones
-        # Al inicial menú de cursos, todas las ventanas están cerradas
+        # Al inicial menú de horarios, todas las ventanas están cerradas
         # Estas se usan para evitar abrir más de una ventana para cada operación
-        self.ventana_nuevo_curso_esta_abierta = False
+        self.ventana_nuevo_horario_esta_abierta = False
         self.ventana_actualizacion_esta_abierta = False
         self.ventana_borrar_esta_abierta = False
         self.ventana_buscar_esta_abierta = False
 
         self.mainloop()
 
-    def obtener_lista_cursos(self):
+    def obtener_lista_horarios(self):
         """
-            Obtiene lista de cursos. "Cursos" es una lista de objetos tipo "Curso", atributos:
-            - id_curso
+            Obtiene lista de horarios. "horarios" es una lista de objetos tipo "horario", atributos:
+            - id_horario
             - nombre
             - profesor
             - num_estudiantes
@@ -87,29 +90,30 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             - duracion_horas
         """
         try: 
-            cursos = self.controlador_curso.listar_cursos()
-            if cursos:
-                return cursos
+            horarios, cursos = self.controlador_horario.listar_horarios()
+            if horarios and cursos:
+                return horarios, cursos
             else:
                 raise ValueError
         except ValueError as e:
             print("Valores inválidos")
         except Exception as e:
-            print(f"Error al listar los cursos: {str(e)}")
+            print(f"Error al listar los horarios: {str(e)}")
         
         
-        # cursos: es una lista de objetos tipo "Curso", atributos:
-        # id_curso
-        # nombre
-        # profesor
-        # num_estudiantes
-        # horarios
-        # descripcion
-        # duracion_horas
+        # horarios: es una lista de objetos tipo "horario", atributos:
+        # id_horario
+        # curso_id
+        # dia_semana
+        # hora_inicio
+        # hora_fin
+        
+        # cursos: es una lista con los nombres de los cursos correspondientes a los curso_id en horarios
 
-    def obtener_listas_profesores(self):
+    def obtener_listas_cursos(self):
+        # Borrar
         """
-            Obtiene lista de profesores. "profesores" es una lista de objetos tipo "Profesor", atributos:
+            Obtiene lista de cursos. "cursos" es una lista de objetos tipo "Cursos", atributos:
             - id_profesor
             - nombre
             - apellido
@@ -117,27 +121,27 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             - telefono
         """
         try: 
-            profesores = self.controlador_profesor.listar_profesores()
+            cursos = self.controlador_curso.listar_cursos()
             
-            if profesores:
+            if cursos:
                 
-                detalles_profesor = []
-                # detalles profesor es una lista con IDs y nombres como:
+                detalles_cursos = []
+                # detalles cursos es una lista con IDs y nombres como:
                 # [
-                # [id1, nombre1, apellido1]
-                # [id2, nombre2, apellido2]
+                # [id1, curso1]
+                # [id2, curso2]
                 # ...
                 # ]
-                
-                for p in profesores:
-                    detalles_profesor.append([p.id_profesor,p.nombre,p.apellido])
 
-                lista_profesores = [
-                    f"ID: {prof[0]} - {prof[1]} {prof[2]}"
-                    for prof in detalles_profesor
+                for c in cursos:
+                    detalles_cursos.append([c.id_curso,c.nombre])
+
+                lista_cursos = [
+                    f"ID: {c[0]} - {c[1]}"
+                    for c in detalles_cursos
                 ]
                     
-                return profesores, detalles_profesor, lista_profesores
+                return cursos, detalles_cursos, lista_cursos
             else:
                 raise ValueError
         except ValueError as e:
@@ -153,28 +157,28 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         # telefono
     
 
-    def abrir_ventana_nuevo_curso(self):
+    def abrir_ventana_nuevo_horario(self):
         """
-            Abrir la ventana para el registro de un nuevo curso
+            Abrir la ventana para el registro de un nuevo horario
         """
-        if self.ventana_nuevo_curso_esta_abierta == False:
-            # Si la ventana de nuevo curso está cerrada, cambiar su atributo a "True" y abrir la ventana
-            self.ventana_nuevo_curso_esta_abierta = True
+        if self.ventana_nuevo_horario_esta_abierta == False:
+            # Si la ventana de nuevo horario está cerrada, cambiar su atributo a "True" y abrir la ventana
+            self.ventana_nuevo_horario_esta_abierta = True
             # Abrir la ventana
-            self.ventana_nuevo_curso = VentanaCrearCurso(parent=self, tipo=1)
-            self.ventana_nuevo_curso.mainloop()
+            self.ventana_nuevo_horario = VentanaCrearHorario(parent=self, tipo=1)
+            self.ventana_nuevo_horario.mainloop()
         else:
             # Si la ventana de registro está abierta, hacerle focus
-            self.ventana_nuevo_curso.focus_force()
+            self.ventana_nuevo_horario.focus_force()
 
     def abrir_ventana_actualizacion(self):
         """
-            Abrir la ventana para la actualización de datos de curso
+            Abrir la ventana para la actualización de datos de horario
         """
         # Si no hay nada seleccionado, se indica que se debe seleccionar un item primero
-        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
+        seleccion = self.frame_tabla_horarios.tabla_horarios.selection()
         if not seleccion:
-            msg_no_hay_seleccion("curso","actualizar")
+            msg_no_hay_seleccion("horario","actualizar")
             #messagebox.showwarning("Advertencia", "Por favor, seleccione un profesor para actualizar")
             return
         
@@ -182,7 +186,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             # Si la ventana de actualización está cerrada, cambiar su atributo a "True" y abrir la ventana
             self.ventana_actualizacion_esta_abierta = True
             # Abrir la ventana
-            self.ventana_actualizacion = VentanaCrearCurso(parent=self, tipo=2)
+            self.ventana_actualizacion = VentanaCrearHorario(parent=self, tipo=2)
             self.ventana_actualizacion.mainloop()
         else:
             # Si la ventana de actualización está abierta, hacerle focus y actualizar los campos si se cambió la selección
@@ -191,25 +195,25 @@ class VentanaMenuCurso(ctk.CTkToplevel):
           
     def abrir_ventana_borrar(self):
         """
-            Abrir la ventana para la eliminación de cursos
+            Abrir la ventana para la eliminación de horarios
         """
         
         # Si no hay nada seleccionado, se indica que se debe seleccionar un item primero
-        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
+        seleccion = self.frame_tabla_horarios.tabla_horarios.selection()
         if not seleccion:
-            msg_no_hay_seleccion("Curso","borrar")
+            msg_no_hay_seleccion("horario","borrar")
             return
         
         if self.ventana_borrar_esta_abierta == False:
             # Si la ventana de borrar está cerrada, cambiar su atributo a "True" y abrir la ventana
             self.ventana_borrar_esta_abierta = True
             # Abrir la ventana
-            self.ventana_borrar = VentanaBorrarCurso(parent=self)
+            self.ventana_borrar = VentanaBorrarHorario(parent=self)
             self.ventana_borrar.mainloop()
         else:
             # Si la ventana de borrar está abierta, hacerle focus
             self.ventana_borrar.focus_force()  
-
+    
     def abrir_ventana_buscar(self):
         """
             Abrir la ventana para buscar curso por iD
@@ -217,7 +221,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
 
         if self.ventana_buscar_esta_abierta == False:
             # Abrir la ventana
-            self.ventana_buscar = VentanaBuscarCurso(parent=self)
+            self.ventana_buscar = VentanaBuscarHorario(parent=self)
             #self.ventana_buscar.mainloop()
         else:
             # Si la ventana de búsqueda está abierta, hacerle focus
@@ -243,21 +247,25 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             
     def abrir_matricular_estudiante(self):
         # Queda pendiente
-        """Abre la ventana para matricular un estudiante en un curso"""
+        return
+        """Abre la ventana para matricular un estudiante en un horario"""
         self.abrir_ventana_secundaria("Matricular Estudiante", VistaMatricularEstudiante)
         
     def abrir_consultar_matriculas(self):
         # Queda pendiente
+        return
         """Abre la ventana para consultar las matrículas"""
         self.abrir_ventana_secundaria("Consultar Matrículas", VistaConsultarMatriculas)
         
     def abrir_consultar_horarios(self):
         # Queda pendiente
-        """Abre la ventana para consultar los horarios de los cursos"""
+        return
+        """Abre la ventana para consultar los horarios de los horarios"""
         self.abrir_ventana_secundaria("Consultar Horarios", VistaConsultarHorarios)
         
     def abrir_eliminar_matricula(self):
         # Queda pendiente
+        return
         """Abre la ventana para eliminar una matrícula"""
         self.abrir_ventana_secundaria("Eliminar Matrícula", VistaEliminarMatricula)
 
@@ -289,5 +297,5 @@ class VentanaMenuCurso(ctk.CTkToplevel):
 
 if __name__ == "__main__":
     db = Database()
-    app = VentanaMenuCurso(db)
+    app = VentanaMenuHorario(db)
     app.iniciar_ventana()
