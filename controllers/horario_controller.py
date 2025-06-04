@@ -1,6 +1,6 @@
-
 #from config.database import Database
 from models.Horario import Horario
+from models.Curso import Curso
 
 class HorarioController:
 
@@ -64,4 +64,60 @@ class HorarioController:
         """
         params = (id_horario,)
         resultado = self.db.execute_query(sql, params)
+
+    def obtener_horarios_por_curso(self, curso_id):
+        """
+        Obtiene todos los horarios asignados a un curso específico.
+        
+        Args:
+            curso_id (int): ID del curso del cual se quieren obtener los horarios
+            
+        Returns:
+            list: Lista de objetos Horario con la información del curso asociado
+        """
+        try:
+            query = """
+                SELECT h.id_horario, h.curso_id, h.dia_semana, h.hora_inicio, h.hora_fin,
+                       c.nombre as nombre_curso, c.profesor, c.descripcion, c.duracion_horas
+                FROM horarios h
+                JOIN cursos c ON h.curso_id = c.id_curso
+                WHERE h.curso_id = ?
+                ORDER BY 
+                    CASE h.dia_semana
+                        WHEN 'Lunes' THEN 1
+                        WHEN 'Martes' THEN 2
+                        WHEN 'Miércoles' THEN 3
+                        WHEN 'Jueves' THEN 4
+                        WHEN 'Viernes' THEN 5
+                        WHEN 'Sábado' THEN 6
+                        WHEN 'Domingo' THEN 7
+                    END,
+                    h.hora_inicio
+            """
+            result = self.db.execute_select(query, (curso_id,))
+            
+            horarios = []
+            for row in result:
+                horario = Horario(
+                    id_horario=row[0],
+                    curso_id=row[1],
+                    dia_semana=row[2],
+                    hora_inicio=row[3],
+                    hora_fin=row[4]
+                )
+                # Agregar información del curso al horario
+                horario.curso = Curso(
+                    id_curso=row[1],
+                    nombre=row[5],
+                    profesor=row[6],
+                    descripcion=row[7],
+                    duracion_horas=row[8]
+                )
+                horarios.append(horario)
+                
+            return horarios
+            
+        except Exception as e:
+            print(f"Error al obtener horarios del curso: {str(e)}")
+            return []
 

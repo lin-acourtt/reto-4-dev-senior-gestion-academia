@@ -17,6 +17,12 @@ class FrameFooter(CTkFrame):
         self.btn_actualizar_curso = ctk.CTkButton(self, text="✏️ Editar",state=DISABLED, command= self.master.abrir_ventana_actualizacion)
         self.btn_eliminar_curso = ctk.CTkButton(self, text="🗑️ Eliminar",state=DISABLED, command= self.master.abrir_ventana_borrar)
         self.btn_buscar_curso = ctk.CTkButton(self, text="🔍 Buscar",command=self.master.abrir_ventana_buscar)
+        self.btn_registrar_horario = ctk.CTkButton(self, text="⏰ Registrar Horario", state=DISABLED, command=self.master.abrir_ventana_registrar_horario)
+        self.btn_consultar_horarios = ctk.CTkButton(
+            self,
+            text="📅 Consultar Horarios",
+            command=self.master.abrir_consultar_horarios
+        )
         #self.btn_ver_matriculas_estudiante = ctk.CTkButton(self, text="🗎 Ver matrículas",state=DISABLED)
         #self.btn_ver_horarios_estudiante = ctk.CTkButton(self, text="⏱️ Ver horarios",state=DISABLED)
 
@@ -24,6 +30,8 @@ class FrameFooter(CTkFrame):
         self.btn_actualizar_curso.grid(row=0,column=1, padx=5, pady=5)
         self.btn_eliminar_curso.grid(row=0,column=2, padx=5, pady=5)
         self.btn_buscar_curso.grid(row=0,column=3, padx=5, pady=5)
+        self.btn_registrar_horario.grid(row=0,column=4, padx=5, pady=5)
+        self.btn_consultar_horarios.grid(row=0,column=5, padx=5, pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
 
@@ -34,7 +42,14 @@ class FrameFooter(CTkFrame):
             self.botones_activos = True
             self.btn_actualizar_curso.configure(state = NORMAL)
             self.btn_eliminar_curso.configure(state = NORMAL)
+            self.btn_registrar_horario.configure(state = NORMAL)
             #self.btn_ver_matriculas_estudiante.configure(state = NORMAL)
             #self.btn_ver_horarios_estudiante.configure(state = NORMAL)
         else:
-            return
+            # Si no hay selección, deshabilitar los botones
+            self.botones_activos = False
+            self.btn_actualizar_curso.configure(state = DISABLED)
+            self.btn_eliminar_curso.configure(state = DISABLED)
+            self.btn_registrar_horario.configure(state = DISABLED)
+            #self.btn_ver_matriculas_estudiante.configure(state = DISABLED)
+            #self.btn_ver_horarios_estudiante.configure(state = DISABLED)
