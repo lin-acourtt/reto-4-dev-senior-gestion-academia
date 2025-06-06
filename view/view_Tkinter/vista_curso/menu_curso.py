@@ -15,6 +15,7 @@ from .vista_matricular_estudiante import VistaMatricularEstudiante
 from .vista_consultar_matriculas import VistaConsultarMatriculas
 from .vista_consultar_horarios import VistaConsultarHorarios
 from .vista_eliminar_matricula import VistaEliminarMatricula
+from .vista_consultar_estudiantes_curso import VistaConsultarEstudiantesCurso
 
 from .ventana_crear_curso import VentanaCrearCurso
 from .ventana_borrar_curso import VentanaBorrarCurso
@@ -275,6 +276,38 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         else:
             # Si la ventana de registro está abierta, hacerle focus
             self.ventana_registrar_horario.focus_force()
+
+    def abrir_consultar_estudiantes_curso(self):
+        """Abre la ventana para consultar los estudiantes inscritos en un curso"""
+        # Verificar si hay un curso seleccionado
+        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("curso", "consultar estudiantes")
+            return
+            
+        # Obtener el ID y nombre del curso seleccionado
+        valores = self.frame_tabla_cursos.tabla_cursos.item(seleccion[0])['values']
+        curso_id = valores[0]
+        nombre_curso = valores[1]
+        
+        # Debug: Imprimir información del curso seleccionado
+        print(f"Curso seleccionado - ID: {curso_id}, Nombre: {nombre_curso}")
+        
+        # Crear y mostrar la ventana
+        ventana = ctk.CTkToplevel(self)
+        ventana.transient(self)
+        ventana.grab_set()
+        
+        # Crear la vista
+        vista = VistaConsultarEstudiantesCurso(
+            root=ventana,
+            db=self.db,
+            curso_id=curso_id,
+            nombre_curso=nombre_curso
+        )
+        
+        # Configurar el tema
+        ctk.set_appearance_mode(self.tema_actual)
 
     def cambiar_tema(self):
         """
