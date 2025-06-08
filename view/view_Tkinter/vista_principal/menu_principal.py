@@ -20,6 +20,7 @@ from view.view_Tkinter.vista_estudiante.menu_estudiante import VentanaMenuEstudi
 from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
 from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
 from view.view_Tkinter.vista_horario.menu_horario import VentanaMenuHorario
+from view.view_Tkinter.vista_matricula.vista_menu_matricula import VistaMenuMatricula
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -87,11 +88,13 @@ class VentanaMenuPrincipal(ctk.CTk):
         self.destroy()
         ventana_horarios = VentanaMenuHorario(db=self.db)
         ventana_horarios.iniciar_ventana(self.tema_actual)
-        
+  
 
     def abrir_ventana_matriculas(self):
-        print("Ventana matrículas")
-    
+        """Abre la ventana para operaciones con matrículas"""
+        self.destroy()
+        VistaMenuMatricula(self, self.db, self.tema_actual)
+
     def cambiar_tema(self):
         """
             Método para cambiar el estilo de la ventana
