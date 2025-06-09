@@ -15,10 +15,12 @@ from .vista_matricular_estudiante import VistaMatricularEstudiante
 from .vista_consultar_matriculas import VistaConsultarMatriculas
 from .vista_consultar_horarios import VistaConsultarHorarios
 from .vista_eliminar_matricula import VistaEliminarMatricula
+from .vista_consultar_estudiantes_curso import VistaConsultarEstudiantesCurso
 
 from .ventana_crear_curso import VentanaCrearCurso
 from .ventana_borrar_curso import VentanaBorrarCurso
 from .ventana_buscar_curso import VentanaBuscarCurso
+from .ventana_registrar_horario import VentanaRegistrarHorario
 
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
 
@@ -72,6 +74,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         self.ventana_actualizacion_esta_abierta = False
         self.ventana_borrar_esta_abierta = False
         self.ventana_buscar_esta_abierta = False
+        self.ventana_registrar_horario_esta_abierta = False
 
         self.mainloop()
 
@@ -252,14 +255,59 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         self.abrir_ventana_secundaria("Consultar Matrículas", VistaConsultarMatriculas)
         
     def abrir_consultar_horarios(self):
-        # Queda pendiente
-        """Abre la ventana para consultar los horarios de los cursos"""
+        """Abre la ventana para consultar los horarios de todos los cursos"""
         self.abrir_ventana_secundaria("Consultar Horarios", VistaConsultarHorarios)
-        
+
     def abrir_eliminar_matricula(self):
         # Queda pendiente
         """Abre la ventana para eliminar una matrícula"""
         self.abrir_ventana_secundaria("Eliminar Matrícula", VistaEliminarMatricula)
+
+    def abrir_ventana_registrar_horario(self):
+        """
+            Abre la ventana para registrar horarios de cursos
+        """
+        if self.ventana_registrar_horario_esta_abierta == False:
+            # Si la ventana de registro de horario está cerrada, cambiar su atributo a "True" y abrir la ventana
+            self.ventana_registrar_horario_esta_abierta = True
+            # Abrir la ventana
+            self.ventana_registrar_horario = VentanaRegistrarHorario(parent=self, db=self.db)
+            self.ventana_registrar_horario.mainloop()
+        else:
+            # Si la ventana de registro está abierta, hacerle focus
+            self.ventana_registrar_horario.focus_force()
+
+    def abrir_consultar_estudiantes_curso(self):
+        """Abre la ventana para consultar los estudiantes inscritos en un curso"""
+        # Verificar si hay un curso seleccionado
+        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("curso", "consultar estudiantes")
+            return
+            
+        # Obtener el ID y nombre del curso seleccionado
+        valores = self.frame_tabla_cursos.tabla_cursos.item(seleccion[0])['values']
+        curso_id = valores[0]
+        nombre_curso = valores[1]
+        
+        # Debug: Imprimir información del curso seleccionado
+        print(f"Curso seleccionado - ID: {curso_id}, Nombre: {nombre_curso}")
+        
+        # Crear y mostrar la ventana
+        ventana = ctk.CTkToplevel(self)
+        ventana.transient(self)
+        ventana.grab_set()
+        
+        # Crear la vista
+        vista = VistaConsultarEstudiantesCurso(
+            root=ventana,
+            db=self.db,
+            curso_id=curso_id,
+            nombre_curso=nombre_curso
+        )
+        
+        # Configurar el tema
+        ctk.set_appearance_mode(self.tema_actual)
 
     def cambiar_tema(self):
         """

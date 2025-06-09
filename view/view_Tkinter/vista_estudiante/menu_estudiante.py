@@ -17,6 +17,8 @@ from .ventana_actualizar_estudiante import VentanaActualizarEstudiante
 from .ventana_borrar_estudiante import VentanaBorrarEstudiante
 from .ventana_buscar_estudiante import VentanaBuscarEstudiante
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
+from .ventana_consultar_cursos_estudiante import VistaConsultarCursosEstudiante
+
 class VentanaMenuEstudiante(ctk.CTkToplevel):
 
     def __init__(self, db: Database = None):
@@ -28,6 +30,7 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         # El método constructor asegura que el atributo "db" sea de tipo "Database""
         self.db = db
         self.controlador_estudiante = EstudianteController(self.db)
+        self.ventana_consultar_cursos_esta_abierta = False
 
     def iniciar_ventana(self, tema_actual):    
         """
@@ -194,3 +197,67 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         app = VentanaMenuPrincipal(db=self.db)
         # Iniciar el bucle principal de la aplicación
         app.iniciar_ventana()
+
+    def abrir_consultar_cursos(self):
+        """Abre la ventana para consultar los cursos del estudiante seleccionado"""
+        # Verificar si hay un estudiante seleccionado
+        seleccion = self.frame_tabla_estudiantes.tabla_estudiantes.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("estudiante", "consultar cursos")
+            return
+            
+        # Obtener el ID y nombre del estudiante seleccionado
+        valores = self.frame_tabla_estudiantes.tabla_estudiantes.item(seleccion[0])['values']
+        estudiante_id = valores[0]
+        nombre_estudiante = f"{valores[1]} {valores[2]}"
+        
+        # Verificar si la ventana anterior aún existe
+        if hasattr(self, 'ventana_consultar_cursos_actual'):
+            try:
+                # Intentar hacer focus a la ventana existente
+                self.ventana_consultar_cursos_actual.focus_force()
+                return
+            except:
+                # Si falla, significa que la ventana ya no existe
+                self.ventana_consultar_cursos_esta_abierta = False
+                if hasattr(self, 'ventana_consultar_cursos_actual'):
+                    delattr(self, 'ventana_consultar_cursos_actual')
+        
+        # Si no hay ventana abierta o la anterior ya no existe, crear una nueva
+        if not self.ventana_consultar_cursos_esta_abierta:
+            # Crear nueva ventana
+            self.ventana_consultar_cursos_esta_abierta = True
+            ventana = ctk.CTkToplevel(self)
+            ventana.title("Consultar Cursos del Estudiante")
+            ventana.geometry("1000x600")
+            ventana.transient(self)
+            ventana.grab_set()
+            centrar_ventana(ventana)
+            
+            # Crear la vista
+            vista = VistaConsultarCursosEstudiante(
+                root=ventana,
+                db=self.db,
+                estudiante_id=estudiante_id,
+                nombre_estudiante=nombre_estudiante
+            )
+            
+            # Configurar el tema
+            ctk.set_appearance_mode(self.tema_actual)
+            
+            # Configurar el protocolo de cierre
+            ventana.protocol("WM_DELETE_WINDOW", lambda: self.cerrar_ventana_consultar_cursos(ventana))
+            
+            # Mantener referencia a la ventana actual
+            self.ventana_consultar_cursos_actual = ventana
+            
+    def cerrar_ventana_consultar_cursos(self, ventana):
+        """Cierra la ventana de consultar cursos y actualiza el estado"""
+        try:
+            ventana.destroy()
+        except:
+            pass
+        finally:
+            self.ventana_consultar_cursos_esta_abierta = False
+            if hasattr(self, 'ventana_consultar_cursos_actual'):
+                delattr(self, 'ventana_consultar_cursos_actual')

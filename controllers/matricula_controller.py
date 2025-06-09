@@ -1,6 +1,7 @@
-
 #from config.database import Database
 from models.Matricula import Matricula
+from models.Estudiante import Estudiante
+from models.Curso import Curso
 
 class MatriculaController:
 
@@ -72,4 +73,161 @@ class MatriculaController:
         """
         params = (id_matricula,)
         resultado = self.db.execute_query(sql, params)
+
+    def obtener_cursos_por_estudiante(self, estudiante_id):
+        """
+        Obtiene todos los cursos en los que está inscrito un estudiante específico.
+        
+        Args:
+            estudiante_id (int): ID del estudiante del cual se quieren obtener los cursos
+            
+        Returns:
+            list: Lista de diccionarios con la información de los cursos
+        """
+        try:
+            query = """
+                SELECT 
+                    c.id_curso,
+                    c.nombre as nombre_curso,
+                    CONCAT(p.nombre, ' ', p.apellido) as profesor,
+                    c.descripcion,
+                    c.duracion_horas,
+                    GROUP_CONCAT(
+                        CONCAT(h.dia_semana, ' ', 
+                        TIME_FORMAT(h.hora_inicio, '%H:%i'), '-', 
+                        TIME_FORMAT(h.hora_fin, '%H:%i')
+                    ) SEPARATOR ', ') as horarios
+                FROM matriculas m
+                JOIN cursos c ON m.curso_id = c.id_curso
+                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
+                LEFT JOIN horarios h ON c.id_curso = h.curso_id
+                WHERE m.estudiante_id = %s
+                GROUP BY c.id_curso, c.nombre, profesor, c.descripcion, c.duracion_horas
+                ORDER BY c.nombre
+            """
+            resultados = self.db.execute_select(query, (estudiante_id,))
+            
+            cursos = []
+            for row in resultados:
+                curso = {
+                    'id_curso': row[0],
+                    'nombre': row[1],
+                    'profesor': row[2] if row[2] else "Sin profesor asignado",
+                    'descripcion': row[3] if row[3] else "Sin descripción",
+                    'duracion_horas': row[4] if row[4] else "No especificada",
+                    'horarios': row[5] if row[5] else "Sin horario asignado"
+                }
+                cursos.append(curso)
+                
+            return cursos
+            
+        except Exception as e:
+            print(f"Error al obtener cursos del estudiante: {str(e)}")
+            return []
+
+    def buscar_matriculas(self, id_curso=None, nombre_curso=None, nombre_estudiante=None):
+        """
+        Busca matrículas según los filtros proporcionados
+        
+        Args:
+            id_curso (int, optional): ID del curso para filtrar
+            nombre_curso (str, optional): Nombre del curso para filtrar
+            nombre_estudiante (str, optional): Nombre del estudiante para filtrar
+            
+        Returns:
+            list: Lista de objetos Matricula con información detallada
+        """
+        try:
+            # Debug: Imprimir parámetros recibidos
+           # print(f"Buscando matrículas con parámetros: id_curso={id_curso}, nombre_curso={nombre_curso}, nombre_estudiante={nombre_estudiante}")
+            
+            query = """
+                SELECT 
+                    m.id_matricula,
+                    m.estudiante_id,
+                    m.curso_id,
+                    m.fecha_matricula,
+                    e.nombre as nombre_estudiante,
+                    e.apellido as apellido_estudiante,
+                    c.nombre as nombre_curso,
+                    CONCAT(p.nombre, ' ', p.apellido) as profesor
+                FROM matriculas m
+                JOIN estudiantes e ON m.estudiante_id = e.id_estudiante
+                JOIN cursos c ON m.curso_id = c.id_curso
+                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
+                WHERE 1=1
+            """
+            params = []
+            
+            if id_curso:
+                query += " AND m.curso_id = %s"
+                params.append(id_curso)
+            elif nombre_curso:
+                query += " AND c.nombre LIKE %s"
+                params.append(f"%{nombre_curso}%")
+                
+            if nombre_estudiante:
+                query += " AND (e.nombre LIKE %s OR e.apellido LIKE %s)"
+                params.extend([f"%{nombre_estudiante}%", f"%{nombre_estudiante}%"])
+                
+            query += " ORDER BY m.fecha_matricula DESC"
+            
+            # Debug: Imprimir query y parámetros
+            # print(f"Query: {query}")
+            # print(f"Parámetros: {params}")
+            
+            resultados = self.db.execute_select(query, tuple(params))
+            
+            # Debug: Imprimir resultados
+            #print(f"Número de resultados encontrados: {len(resultados)}")
+            #if resultados:
+            #    print("Primer resultado:", resultados[0])
+            
+            matriculas = []
+            for row in resultados:
+                # Crear objeto Estudiante
+                estudiante = Estudiante(
+                    id_estudiante=row[1],
+                    nombre=row[4],
+                    apellido=row[5],
+                    correo=None,
+                    telefono=None
+                )
+                
+                # Crear objeto Curso
+                curso = Curso(
+                    id_curso=row[2],
+                    nombre=row[6],
+                    profesor=row[7],
+                    num_estudiantes=None,
+                    horarios=None,
+                    descripcion=None,
+                    duracion_horas=None
+                )
+                
+                # Crear objeto Matricula
+                matricula = Matricula(
+                    id_matricula=row[0],
+                    estudiante_id=row[1],
+                    curso_id=row[2],
+                    fecha_matricula=row[3]
+                )
+                
+                # Agregar objetos relacionados
+                matricula.estudiante = estudiante
+                matricula.curso = curso
+                
+                matriculas.append(matricula)
+            
+            # Debug: Imprimir número de matrículas creadas
+            #print(f"Número de matrículas creadas: {len(matriculas)}")
+            
+            return matriculas
+            
+        except Exception as e:
+            print(f"Error al buscar matrículas: {str(e)}")
+            # Debug: Imprimir el traceback completo
+            #import traceback
+            #traceback.print_exc()
+            return []
 

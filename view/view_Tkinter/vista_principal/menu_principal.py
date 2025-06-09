@@ -2,6 +2,7 @@ import sys
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os
+import sys
 # from view.view_Tkinter.viewEstudiante.menuEstudiante import MenuEstudiante
 # from view.view_Tkinter.viewDocenteFull.menuDocenteFull import MenuDocenteFull
 from controllers.estudiante_controller import EstudianteController
@@ -87,7 +88,7 @@ class VentanaMenuPrincipal(ctk.CTk):
         self.destroy()
         ventana_horarios = VentanaMenuHorario(db=self.db)
         ventana_horarios.iniciar_ventana(self.tema_actual)
-        
+  
 
     def abrir_ventana_matriculas(self):
         """Abre la ventana para operaciones con matrículas"""
@@ -121,10 +122,10 @@ class VentanaMenuPrincipal(ctk.CTk):
             if self.db:
                 self.db.close()
             # Destruir la ventana principal
-            sys.exit()
+            sys.exit(0)
         except Exception as e:
             print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error
             self.quit()
-            sys.exit()
+            sys.exit(1)
 
