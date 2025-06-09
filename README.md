@@ -17,3 +17,20 @@ Tareas:
 | Si | Consultar los estudiantes inscritos en un curso. |  Cursos  |
 | si| Consultar los horarios asignados a un curso. |  Cursos  |
 | Sí | Eliminar matrículas sin afectar la información de los estudiantes ni de los cursos. | Matrículas |
+
+
+Estudiantes
+- Mover el botón de "ver cursos" de estudiantes
+- Agregar matrícular también en ventana de estudiantes
+
+Profesores
+- Al intentar ver los cursos de un profesor, si no tiene cursos no debería por qué abrir la ventana de pop up
+- La búsqueda de cursos por profesor no está sirviendo, en el sentido que si un profesor tiene cursos, al dar clic en ver cursos hay un mensaje de que no hay cursos
+
+Cursos
+- Al registrar un horario desde la ventana de cursos, no se actualiza la tabla con el nuevo horario
+- Al intentar ver los estudiantes de un curso, si no tiene estudiantes no debería por qué abrir la ventana de pop up
+
+- Revisar los message box
+- 
+  
