@@ -3,18 +3,21 @@ import customtkinter
 
 def msg_registro_exitoso(tipo_entidad):
     """
-        Ventana para indicar registro exitoso
+        Ventana para indicar registro exitoso. El mensaje es:
+        >"Tipo_entidad" registrado con exito.
+
     """
     CTkMessagebox(
                 title= "Guardado",
-                message= f"{tipo_entidad} registrado con éxito",
+                message= f"{tipo_entidad.capitalize()} registrado con éxito",
                 icon= "check",
                 option_1="OK"
             )
 
 def msg_eliminacion_exitosa(tipo_entidad):
     """
-        Ventana para indicar borrado exitoso
+        Ventana para indicar borrado exitoso. El mensaje es:
+        > "Tipo_entidad" borrado con éxito.
     """
     CTkMessagebox(
                 title= "Borrado",
@@ -24,6 +27,10 @@ def msg_eliminacion_exitosa(tipo_entidad):
             )
 
 def msg_sin_cambios():
+    """
+        Ventana para indicar que no se han hecho cambios. Mensaje:
+        > No se guardarán cambios.
+    """
     CTkMessagebox(
             title= "Sin cambios",
             message= "No se guardarán cambios",
@@ -32,6 +39,10 @@ def msg_sin_cambios():
         )
     
 def msg_id_no_encontrado(id):
+    """
+        Ventana para indicar que no encontró el ID (Para los input Dialog de búsqueda). Mensaje:
+        > No se encontró el ID "id"
+    """
     CTkMessagebox(
             title= "No encontrado",
             message= f"No se encontró el ID {id}.",
@@ -40,6 +51,9 @@ def msg_id_no_encontrado(id):
         )
 
 def msg_error_campos_vacios():
+    """
+        Ventana para indicar que no se pueden dejar los campos vacíos.
+    """
     CTkMessagebox(
             title= "Error",
             message= f"Todos los campos son obligatorios.",
@@ -48,9 +62,12 @@ def msg_error_campos_vacios():
         )
 
 def msg_entrada_duplicada(tipo_entidad):
+    """
+        Mensaje para indicar que ya hay un entry con este correo.
+    """
     CTkMessagebox(
             title= "Error",
-            message= f"Ya existe un {tipo_entidad} con ese correo",
+            message= f"Ya existe un {tipo_entidad} con ese correo.",
             icon= "cancel",
             option_1="OK"
         )
@@ -64,13 +81,21 @@ def msg_error_integrity(tipo_entidad, detalle):
         )
 
 def msg_error_inesperado(detalle):
+    """
+        Ventana para contener un error inesperado. Mensaje:
+        > Error inesperado: {detalle}.
+    """
     CTkMessagebox(
             title= "Error",
-            message= f"Error inesperado: {detalle}",
+            message= f"Error inesperado: {detalle}.",
             icon= "cancel",
             option_1="OK")
     
 def msg_no_hay_seleccion(tipo_entidad, accion):
+    """
+        Ventana para indicar que no se ha hecho una selección. Mensaje:
+        > Por favor, seleccione un {tipo_entidad} para {acción}.
+    """
     CTkMessagebox(
             title= "Error",
             message= f"Por favor, seleccione un {tipo_entidad} para {accion}.",

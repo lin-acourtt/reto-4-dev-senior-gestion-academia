@@ -28,9 +28,9 @@ class FrameFooter(CTkFrame):
         self.btn_actualizar_curso.grid(row=0, column=1, padx=5, pady=5)
         self.btn_eliminar_curso.grid(row=0, column=2, padx=5, pady=5)
         self.btn_buscar_curso.grid(row=0, column=3, padx=5, pady=5)
-        self.btn_registrar_horario.grid(row=0, column=4, padx=5, pady=5)
-        self.btn_consultar_horarios.grid(row=0, column=5, padx=5, pady=5)
-        self.btn_estudiantes_inscritos.grid(row=0, column=6, padx=5, pady=5)
+        self.btn_registrar_horario.grid(row=1, column=0, padx=5, pady=5)
+        self.btn_consultar_horarios.grid(row=1, column=1, padx=5, pady=5)
+        self.btn_estudiantes_inscritos.grid(row=1, column=2, padx=5, pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
 

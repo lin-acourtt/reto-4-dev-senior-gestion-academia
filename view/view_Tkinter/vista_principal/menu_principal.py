@@ -21,6 +21,7 @@ from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
 from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
 from view.view_Tkinter.vista_horario.menu_horario import VentanaMenuHorario
 from view.view_Tkinter.vista_matricula.menu_matricula import VentanaMenuMatricula
+#from view.view_Tkinter.vista_matricula.vista_menu_matricula import VistaMenuMatricula
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -95,6 +96,8 @@ class VentanaMenuPrincipal(ctk.CTk):
         self.destroy()
         ventana_matriculas = VentanaMenuMatricula(db=self.db)
         ventana_matriculas.iniciar_ventana(self.tema_actual)
+
+        #VistaMenuMatricula(self, self.db, self.tema_actual)
         
     
     def cambiar_tema(self):

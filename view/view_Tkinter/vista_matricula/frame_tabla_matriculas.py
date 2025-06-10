@@ -66,6 +66,10 @@ class FrameTablaMatriculas(CTkFrame):
             - nombre_estudiantes: El nombre de los estudiantes
             - nombre_cursos: El nombre de los cursos
         """
+        # Limpiar tabla
+        for item in self.tabla_matriculas.get_children():
+            self.tabla_matriculas.delete(item)
+
         # Llenar el Treeview con esta información
         for mat,est,cur in zip(matriculas,nombre_estudiantes,nombre_cursos):
             try:

@@ -17,7 +17,9 @@ from .ventana_actualizar_profesor import VentanaActualizarProfesor
 from .ventana_borrar_profesor import VentanaBorrarProfesor
 from .ventana_buscar_profesor import VentanaBuscarProfesor
 from .ventana_cursos_profesor import VentanaCursosProfesor
-from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta, msg_error_inesperado
+
+from view.view_Tkinter.vista_tablas_resultados.ventana_tabla_resultados import VentanaTablaResultados
 
 class VentanaMenuProfesor(ctk.CTkToplevel):
 
@@ -68,7 +70,8 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         self.ventana_actualizacion_esta_abierta = False
         self.ventana_borrar_esta_abierta = False
         self.ventana_buscar_esta_abierta = False
-        self.ventana_cursos_esta_abierta = False
+        self.ventana_cursos_esta_abierta = False #v1
+        self.ventana_consultar_cursos_esta_abierta = False
         #self.mainloop()
 
 
@@ -172,7 +175,7 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         """
             Abrir la ventana que muestra los cursos asociados a un profesor
         """
-
+        #v1
         # Si no hay nada seleccionado, se indica que se debe seleccionar un item primero
         seleccion = self.frame_tabla_profesores.tabla_profesores.selection()
         if not seleccion:
@@ -215,3 +218,115 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         app = VentanaMenuPrincipal(db=self.db)
         # Iniciar el bucle principal de la aplicación
         app.iniciar_ventana()
+
+    def obtener_datos_seleccion(self, seleccion):
+        """
+            Retorna:
+            - valores: datos de la fila seleccionada en la tabla
+            - profesor_id: ID del profesor
+            - nombre_profesor: Nombre del profesor
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+
+        # Obtener el ID y nombre del profesor seleccionado
+        valores = self.frame_tabla_profesores.tabla_profesores.item(seleccion[0])['values']
+        profesor_id = valores[0]
+        nombre_profesor = f"{valores[1]} {valores[2]}"
+        return valores, profesor_id, nombre_profesor
+    
+    def obtener_datos_de_los_cursos(self, profesor_id):
+        """
+            Retorna lista de cursos para confirmar si el profesor tiene cursos
+            - cursos: es una lista, en donde cada elemento es un objeto de la clase Curso
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+
+        # Obtener cursos del profesor
+        cursos = self.controlador_profesor.obtener_cursos_profesor(profesor_id)
+        # - cursos: es una lista, en donde cada elemento es un objeto de la clase Curso
+        return cursos
+    
+    def preparar_datos_para_mostrar_cursos(self, cursos):
+        """
+            Retorna, lista para ser impresa en la ventana de resultados
+            - resultados: lista, en donde cada elemento es una lista con los datos a imprimir 
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+        # Se convierte cursos para que quede todo como en filas.
+        resultados = []
+
+        for c in cursos:
+            fila = [c.id_curso,
+                    c.nombre,
+                    c.descripcion,
+                    c.duracion_horas,
+                    c.horarios
+                    ]
+
+            resultados.append(fila)  
+        return resultados
+            
+    def abrir_ventana_cursos_profesor2(self):
+        """Abre la ventana para consultar los cursos del profesor seleccionado"""
+        
+        # Verificar si hay un profesor seleccionado
+        seleccion = self.frame_tabla_profesores.tabla_profesores.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("profesor", "consultar cursos")
+            return
+        
+        # Obtener los datos de la selección
+        valores, profesor_id, nombre_profesor = self.obtener_datos_seleccion(seleccion)
+
+        # Confirmar si el profesor tiene cursos
+        cursos = self.obtener_datos_de_los_cursos(profesor_id)
+
+        if not cursos:
+            msg_error_inesperado("Este profesor no tiene ningún curso asociado.")
+            if hasattr(self, 'ventana_consultar_cursos_actual'):
+                self.ventana_consultar_cursos_actual.destroy()
+            return
+        
+        # Preparar los datos para su impresión en el TreeView
+        resultados = self.preparar_datos_para_mostrar_cursos(cursos)
+        
+        # Verificar si la ventana anterior aún existe
+        if hasattr(self, 'ventana_consultar_cursos_actual'):
+            try:
+                # Intentar hacer focus a la ventana existente e imprimir nuevos datos si un usuario diferente ha sido seleccionado
+                self.ventana_consultar_cursos_actual.actualizar_titulos(nombre_profesor)
+                self.ventana_consultar_cursos_actual.frame_tabla_resultados.imprimir_informacion_en_tabla(resultados)
+                self.ventana_consultar_cursos_actual.focus_force()
+                return
+            except:
+                # Si falla, significa que la ventana ya no existe
+                self.ventana_consultar_cursos_esta_abierta = False
+                if hasattr(self, 'ventana_consultar_cursos_actual'):
+                    delattr(self, 'ventana_consultar_cursos_actual')
+        
+        # Si no hay ventana abierta o la anterior ya no existe, crear una nueva
+        if not self.ventana_consultar_cursos_esta_abierta:
+        
+            columnas = ("id", "nombre", "descripcion", "duracion", "horarios")
+            nombre_columnas = ("ID", "Nombre del Curso", "Descripción","Duración (hrs)","Horarios")
+            ancho_columnas = (100, 200, 250, 100, 200)
+            # Crear nueva ventana
+            self.ventana_consultar_cursos_esta_abierta = True
+
+            self.ventana_consultar_cursos_actual = VentanaTablaResultados(
+                self,
+                "curso",
+                "profesor",
+                nombre_profesor,
+                columnas,
+                nombre_columnas,
+                ancho_columnas,
+                resultados,
+                0.7,
+                0.7
+            )
+    def cerrar_resultados(self):
+        """Cierra la ventana de consultar cursos y actualiza el estado"""
+        self.ventana_consultar_cursos_esta_abierta = False
+        self.ventana_consultar_cursos_actual.destroy()
+        

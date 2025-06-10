@@ -21,7 +21,6 @@ from .ventana_crear_matricula import VentanaCrearMatricula
 from .ventana_borrar_matricula import VentanaBorrarMatricula
 from .ventana_buscar_matricula import VentanaBuscarMatricula
 
-
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
 
 class VentanaMenuMatricula(ctk.CTkToplevel):

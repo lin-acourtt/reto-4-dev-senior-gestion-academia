@@ -6,6 +6,7 @@ from config.database import Database
 from config.appearance import centrar_ventana
 
 from controllers.estudiante_controller import EstudianteController
+from controllers.matricula_controller import MatriculaController
 
 from mysql.connector import IntegrityError
 
@@ -16,8 +17,9 @@ from .ventana_registrar_estudiante import VentanaRegistrarEstudiante
 from .ventana_actualizar_estudiante import VentanaActualizarEstudiante
 from .ventana_borrar_estudiante import VentanaBorrarEstudiante
 from .ventana_buscar_estudiante import VentanaBuscarEstudiante
-from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta, msg_error_inesperado
 from .ventana_consultar_cursos_estudiante import VistaConsultarCursosEstudiante
+from view.view_Tkinter.vista_tablas_resultados.ventana_tabla_resultados import VentanaTablaResultados
 
 class VentanaMenuEstudiante(ctk.CTkToplevel):
 
@@ -30,7 +32,6 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         # El método constructor asegura que el atributo "db" sea de tipo "Database""
         self.db = db
         self.controlador_estudiante = EstudianteController(self.db)
-        self.ventana_consultar_cursos_esta_abierta = False
 
     def iniciar_ventana(self, tema_actual):    
         """
@@ -70,6 +71,7 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         self.ventana_actualizacion_esta_abierta = False
         self.ventana_borrar_esta_abierta = False
         self.ventana_buscar_esta_abierta = False
+        self.ventana_consultar_cursos_esta_abierta = False
         self.mainloop()
 
 
@@ -261,3 +263,120 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
             self.ventana_consultar_cursos_esta_abierta = False
             if hasattr(self, 'ventana_consultar_cursos_actual'):
                 delattr(self, 'ventana_consultar_cursos_actual')
+
+    def obtener_datos_seleccion(self, seleccion):
+        """
+            Retorna:
+            - valores: datos de la fila seleccionada en la tabla
+            - estudiante_id: ID del estudiante
+            - nombre_estudiante: Nombre del estudiante
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+
+        # Obtener el ID y nombre del estudiante seleccionado
+        valores = self.frame_tabla_estudiantes.tabla_estudiantes.item(seleccion[0])['values']
+        estudiante_id = valores[0]
+        nombre_estudiante = f"{valores[1]} {valores[2]}"
+        return valores, estudiante_id, nombre_estudiante
+    
+    def obtener_datos_de_los_cursos(self, estudiante_id):
+        """
+            Retorna lista de cursos para confirmar si el estudiante tiene cursos
+            - cursos: es una lista, en donde cada elemento es un diccionario de la forma:
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+
+        # Obtener cursos del estudiante
+        controlador_matricula = MatriculaController(self.db)
+        cursos = controlador_matricula.obtener_cursos_por_estudiante(estudiante_id)
+        # Cursos es una lista, en donde cada elemento es un diccionario de la forma:
+            # {'id_curso': ID, 
+            #   'nombre': 'Nombre', 
+            #   'profesor': 'Nombre', 
+            #   'descripcion': 'Descripción', 
+            #   'duracion_horas': Horas, 
+            #   'horarios': 'Horarios'} 
+        return cursos
+    
+    def preparar_datos_para_mostrar_cursos(self, cursos):
+        """
+            Retorna, lista para ser impresa en la ventana de resultados
+            - resultados: lista, en donde cada elemento es una lista con los datos a imprimir 
+        """
+        # Función de apoyo para abrir_consultar_cursos2
+        # Se convierte cursos para que quede todo como en filas.
+        resultados = []
+
+        for c in cursos:
+            fila = []
+            elementos = c.values()
+            for e in elementos:
+                fila.append(e)
+
+            resultados.append(fila)  
+        return resultados
+            
+    def abrir_consultar_cursos2(self):
+        """Abre la ventana para consultar los cursos del estudiante seleccionado"""
+        
+        # Verificar si hay un estudiante seleccionado
+        seleccion = self.frame_tabla_estudiantes.tabla_estudiantes.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("estudiante", "consultar cursos")
+            return
+        
+        # Obtener los datos de la selección
+        valores, estudiante_id, nombre_estudiante = self.obtener_datos_seleccion(seleccion)
+
+        # Confirmar si el estudiante tiene cursos
+        cursos = self.obtener_datos_de_los_cursos(estudiante_id)
+
+        if not cursos:
+            msg_error_inesperado("Este estudiante no está inscrito en ningún curso")
+            if hasattr(self, 'ventana_consultar_cursos_actual'):
+                self.ventana_consultar_cursos_actual.destroy()
+            return
+        
+        # Preparar los datos para su impresión en el TreeView
+        resultados = self.preparar_datos_para_mostrar_cursos(cursos)
+        
+        # Verificar si la ventana anterior aún existe
+        if hasattr(self, 'ventana_consultar_cursos_actual'):
+            try:
+                # Intentar hacer focus a la ventana existente e imprimir nuevos datos si un usuario diferente ha sido seleccionado
+                self.ventana_consultar_cursos_actual.actualizar_titulos(nombre_estudiante)
+                self.ventana_consultar_cursos_actual.frame_tabla_resultados.imprimir_informacion_en_tabla(resultados)
+                self.ventana_consultar_cursos_actual.focus_force()
+                return
+            except:
+                # Si falla, significa que la ventana ya no existe
+                self.ventana_consultar_cursos_esta_abierta = False
+                if hasattr(self, 'ventana_consultar_cursos_actual'):
+                    delattr(self, 'ventana_consultar_cursos_actual')
+        
+        # Si no hay ventana abierta o la anterior ya no existe, crear una nueva
+        if not self.ventana_consultar_cursos_actual:
+        
+            columnas = ("id", "curso", "profesor", "descripcion", "duracion", "horarios")
+            nombre_columnas = ("ID", "Curso", "Profesor", "Descripción","Duración (hrs)","Horarios")
+            ancho_columnas = (50, 200, 200, 200, 100, 200)
+            # Crear nueva ventana
+            self.ventana_consultar_cursos_esta_abierta = True
+
+            self.ventana_consultar_cursos_actual = VentanaTablaResultados(
+                self,
+                "curso",
+                "estudiante",
+                nombre_estudiante,
+                columnas,
+                nombre_columnas,
+                ancho_columnas,
+                resultados,
+                0.7,
+                0.7
+            )
+    def cerrar_resultados(self):
+        """Cierra la ventana de consultar cursos y actualiza el estado"""
+        self.ventana_consultar_cursos_esta_abierta = False
+        self.ventana_consultar_cursos_actual.destroy()
+        
