@@ -20,7 +20,7 @@ Tareas:
 
 
 Estudiantes
-- Mover el botón de "ver cursos" de estudiantes
+- ✅ Quitar los botenes de matrícula y horario, y dejar el botón de "ver cursos" de estudiantes
 - Agregar matrícular también en ventana de estudiantes
 
 Profesores
