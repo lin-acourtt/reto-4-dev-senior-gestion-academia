@@ -76,12 +76,13 @@ class HorarioController:
             list: Lista de objetos Horario con la información del curso asociado
         """
         try:
-            query = """
+            sql = """
                 SELECT h.id_horario, h.curso_id, h.dia_semana, h.hora_inicio, h.hora_fin,
-                       c.nombre as nombre_curso, c.profesor, c.descripcion, c.duracion_horas
+                       c.nombre as nombre_curso, c.profesor_id, CONCAT(p.nombre,' ',p.apellido) as nombre_profesor, c.descripcion, c.duracion_horas
                 FROM horarios h
                 JOIN cursos c ON h.curso_id = c.id_curso
-                WHERE h.curso_id = ?
+                JOIN profesores p ON c.profesor_id = p.id_profesor
+                WHERE h.curso_id = %s
                 ORDER BY 
                     CASE h.dia_semana
                         WHEN 'Lunes' THEN 1
@@ -94,10 +95,11 @@ class HorarioController:
                     END,
                     h.hora_inicio
             """
-            result = self.db.execute_select(query, (curso_id,))
+            params = (curso_id,)
+            resultado = self.db.execute_select(sql, params)
             
-            horarios = []
-            for row in result:
+            """horarios = []
+            for row in resultado:
                 horario = Horario(
                     id_horario=row[0],
                     curso_id=row[1],
@@ -114,8 +116,9 @@ class HorarioController:
                     duracion_horas=row[8]
                 )
                 horarios.append(horario)
-                
-            return horarios
+                """
+            #return horarios
+            return resultado
             
         except Exception as e:
             print(f"Error al obtener horarios del curso: {str(e)}")

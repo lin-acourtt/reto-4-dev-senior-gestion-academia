@@ -18,8 +18,8 @@ class FrameFooter(CTkFrame):
         self.btn_eliminar_curso = ctk.CTkButton(self, text="🗑️ Eliminar", state=DISABLED, command=self.master.abrir_ventana_borrar)
         self.btn_buscar_curso = ctk.CTkButton(self, text="🔍 Buscar", command=self.master.abrir_ventana_buscar)
         self.btn_registrar_horario = ctk.CTkButton(self, text="⏰ Registrar Horario", state=DISABLED, command=self.master.abrir_ventana_registrar_horario)
-        self.btn_consultar_horarios = ctk.CTkButton(self, text="📅 Consultar Horarios", command=self.master.abrir_consultar_horarios)
-        self.btn_estudiantes_inscritos = ctk.CTkButton(self, text="👥 Estudiantes inscritos", state=DISABLED, command=self.master.abrir_consultar_estudiantes_curso)
+        self.btn_consultar_horarios = ctk.CTkButton(self, text="📅 Consultar Horarios", state=DISABLED, command=self.master.abrir_consultar_horarios2)
+        self.btn_estudiantes_inscritos = ctk.CTkButton(self, text="👥 Estudiantes inscritos", state=DISABLED, command=self.master.abrir_consultar_estudiantes_curso2)
         
         #self.btn_ver_matriculas_estudiante = ctk.CTkButton(self, text="🗎 Ver matrículas",state=DISABLED)
         #self.btn_ver_horarios_estudiante = ctk.CTkButton(self, text="⏱️ Ver horarios",state=DISABLED)
@@ -48,9 +48,11 @@ class FrameFooter(CTkFrame):
             self.btn_eliminar_curso.configure(state=NORMAL)
             self.btn_registrar_horario.configure(state=NORMAL)
             self.btn_estudiantes_inscritos.configure(state=NORMAL)
+            self.btn_consultar_horarios.configure(state=NORMAL)
         else:
             # Si no hay selección, desactivar los botones
             self.btn_actualizar_curso.configure(state=DISABLED)
             self.btn_eliminar_curso.configure(state=DISABLED)
             self.btn_registrar_horario.configure(state=DISABLED)
             self.btn_estudiantes_inscritos.configure(state=DISABLED)
+            self.btn_consultar_horarios.configure(state=DISABLED)

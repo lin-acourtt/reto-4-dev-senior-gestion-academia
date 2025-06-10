@@ -231,3 +231,21 @@ class MatriculaController:
             #traceback.print_exc()
             return []
 
+    def obtener_estudiantes_por_curso(self,id_curso):
+        """
+            Retorna el objeto del matricula con el ID especificado
+        """
+        sql = """
+            SELECT m.id_matricula, 
+                m.estudiante_id, 
+                CONCAT(e.nombre, ' ', e.apellido) as nombre_estudiante, 
+                m.fecha_matricula 
+                FROM matriculas m
+                JOIN estudiantes e ON m.estudiante_id = e.id_estudiante
+                WHERE m.curso_id=%s;
+        """
+        params = (id_curso,)
+        resultado = self.db.execute_select(sql, params)
+
+        return resultado
+
