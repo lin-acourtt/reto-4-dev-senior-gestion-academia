@@ -274,6 +274,12 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         """
             Abre la ventana para registrar horarios de cursos
         """
+        # Verificar si hay un curso seleccionado
+        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
+        if not seleccion:
+            msg_no_hay_seleccion("curso", "registrar horario")
+            return
+
         if self.ventana_registrar_horario_esta_abierta == False:
             # Si la ventana de registro de horario está cerrada, cambiar su atributo a "True" y abrir la ventana
             self.ventana_registrar_horario_esta_abierta = True

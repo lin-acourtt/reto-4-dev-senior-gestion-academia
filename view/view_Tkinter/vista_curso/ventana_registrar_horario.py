@@ -1,11 +1,26 @@
 import customtkinter as ctk
-from tkinter import messagebox
+from view.view_Tkinter.vista_msgbox.msgbox_library import msg_sin_cambios, msg_registro_exitoso, msg_error_campos_vacios, msg_entrada_duplicada, msg_error_integrity, msg_error_inesperado, msg_error_cargar_datos, msg_conflicto_horas
+from mysql.connector import IntegrityError
 from config.appearance import centrar_ventana
 from controllers.horario_controller import HorarioController
 from controllers.curso_controller import CursoController
 
 class VentanaRegistrarHorario(ctk.CTkToplevel):
-    def __init__(self, parent, db=None):
+    """
+        Inicializa la ventana para registrar horarios desde la ventana de cursos.
+    """
+    dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
+    horas = ['06:00','06:30','07:00','07:30','08:00','08:30',
+             '09:00','09:30','10:00','10:30','11:00','11:30',
+             '12:00','12:30','13:00','13:30','14:00','14:30',
+             '15:00','15:30','15:00','15:30','16:00','16:30',
+             '17:00','17:30','18:00','18:30','19:00','19:30',
+             '20:00','20:30','21:00','21:30','22:00','22:30',]
+    
+    def __init__(self, parent=None, db=None):
+        """
+            Se debe definir el parent, que sería la ventana de "MenuCurso" y la base de datos
+        """
         super().__init__()
         self.parent = parent
         self.db = db
@@ -14,176 +29,134 @@ class VentanaRegistrarHorario(ctk.CTkToplevel):
         
         # Obtener el curso seleccionado
         seleccion = self.parent.frame_tabla_cursos.tabla_cursos.selection()
-        if not seleccion:
-            messagebox.showerror("Error", "Debe seleccionar un curso primero")
-            self.parent.ventana_registrar_horario_esta_abierta = False
-            self.destroy()
-            return
-            
-        # Obtener el ID del curso seleccionado (está en la primera columna)
-        item = self.parent.frame_tabla_cursos.tabla_cursos.item(seleccion[0])
-        valores = item['values']
-        if not valores:
-            messagebox.showerror("Error", "No se pudo obtener la información del curso")
-            self.parent.ventana_registrar_horario_esta_abierta = False
-            self.destroy()
-            return
-            
-        self.curso_seleccionado_id = valores[0]  # El ID está en la primera columna
+        valores = self.parent.frame_tabla_cursos.tabla_cursos.item(seleccion[0])['values']
+        self.curso_id = valores[0]
+        self.curso_nombre = valores[1]  # El nombre del curso está en la segunda columna
         
-        # Configurar la ventana
-        self.title("Registrar Horario de Curso")
-        self.geometry("500x400")
-        centrar_ventana(self)
+        centrar_ventana(self,0.4)
         self.resizable(False, False)
         
-        # Frame principal
-        self.frame_principal = ctk.CTkFrame(self)
-        self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
-        
-        # Título
-        ctk.CTkLabel(
-            self.frame_principal,
-            text="Registrar Horario de Curso",
-            font=("Helvetica", 24, "bold")
-        ).pack(pady=20)
-        
-        # Campos del formulario
-        self.crear_campos_formulario()
-        
-        # Botones
-        self.crear_botones()
-        
-        # Cargar información del curso seleccionado
-        self.cargar_curso_seleccionado()
-        
-    def crear_campos_formulario(self):
-        # Frame para los campos
-        frame_campos = ctk.CTkFrame(self.frame_principal)
-        frame_campos.pack(fill="both", expand=True, padx=20, pady=10)
-        
-        # Mostrar curso seleccionado (solo lectura)
-        ctk.CTkLabel(frame_campos, text="Curso seleccionado:").pack(pady=(10,5))
-        self.label_curso = ctk.CTkLabel(frame_campos, text="", font=("Helvetica", 14))
-        self.label_curso.pack(pady=(0,10))
-        
-        # Selección de día
-        ctk.CTkLabel(frame_campos, text="Día de la semana:").pack(pady=(10,5))
-        self.dia = ctk.CTkComboBox(
-            frame_campos,
-            width=400,
-            values=["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
-        )
-        self.dia.pack(pady=(0,10))
-        
-        # Hora de inicio
-        ctk.CTkLabel(frame_campos, text="Hora de inicio (HH:MM):").pack(pady=(10,5))
-        self.hora_inicio = ctk.CTkEntry(frame_campos, width=400, placeholder_text="Ejemplo: 09:00")
-        self.hora_inicio.pack(pady=(0,10))
-        
-        # Hora de fin
-        ctk.CTkLabel(frame_campos, text="Hora de fin (HH:MM):").pack(pady=(10,5))
-        self.hora_fin = ctk.CTkEntry(frame_campos, width=400, placeholder_text="Ejemplo: 11:00")
-        self.hora_fin.pack(pady=(0,10))
+        self.columnconfigure(0,weight=1)
+        self.columnconfigure(1,weight=1)
+        row_number = 0
 
-    def crear_botones(self):
-        """Crea los botones de la ventana"""
-        frame_botones = ctk.CTkFrame(self.frame_principal)
-        frame_botones.pack(fill="x", padx=20, pady=20)
+        # Título en la ventana
+        self.label_titulo = ctk.CTkLabel(self, text="Registrar nuevo horario", font=("Helvetica", 14, "bold"))
+        self.label_titulo.grid(row = 0, column = 0, columnspan=2, pady=(10,10))
+
+        # Mostrar curso seleccionado
+        row_number += 1
+        self.label_curso_seleccionado = ctk.CTkLabel(self, text=f"Curso: {self.curso_nombre}", font=("Helvetica", 12))
+        self.label_curso_seleccionado.grid(row = row_number, column = 0, columnspan=2, pady=(10,10))
+
+        # Día de semana
+        row_number += 1
+        self.label_dia = ctk.CTkLabel(self, text="Día de semana:")
+        self.label_dia.grid(row = row_number, column= 0, padx=(10,10), pady=(5,5))
+        self.cobox_dia = ctk.CTkComboBox(self)
+        self.cobox_dia.grid(row = row_number, column= 1, padx=(10,30), pady=(5,5), sticky='ew')
+        self.cobox_dia.configure(state='readonly')
         
-        ctk.CTkButton(
-            frame_botones,
-            text="Registrar Horario",
-            command=self.registrar_horario,
-            width=200,
-            height=40,
-            corner_radius=10
-        ).pack(side="left", padx=10, expand=True)
+        # Hora Inicio
+        row_number += 1
+        self.label_hora_inicio = ctk.CTkLabel(self, text="Hora de inicio:")
+        self.label_hora_inicio.grid(row = row_number, column= 0, padx=(10,10), pady=(5,5))
+        self.cobox_hora_inicio = ctk.CTkComboBox(self)
+        self.cobox_hora_inicio.grid(row = row_number, column= 1, padx=(10,30), pady=(5,5), sticky='ew')
+        self.cobox_hora_inicio.configure(state='readonly')
+
+        # Hora Fin
+        row_number += 1
+        self.label_hora_fin = ctk.CTkLabel(self, text="Hora de fin:")
+        self.label_hora_fin.grid(row = row_number, column= 0, padx=(10,10), pady=(5,5))
+        self.cobox_hora_fin = ctk.CTkComboBox(self)
+        self.cobox_hora_fin.grid(row = row_number, column= 1, padx=(10,30), pady=(5,5), sticky='ew')
+        self.cobox_hora_fin.configure(state='readonly')
         
-        ctk.CTkButton(
-            frame_botones,
-            text="Cancelar",
-            command=self.cancelar_registro,
-            width=200,
-            height=40,
-            corner_radius=10,
-            fg_color="#FF5555",
-            hover_color="#FF3333"
-        ).pack(side="right", padx=10, expand=True)
+        row_number += 1
+        # Botón de guardado    
+        self.btn_guardar = ctk.CTkButton(self, text="Guardar", command=self.guardar_registro)
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
+        # Botón de cancelar    
+        self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20), pady=15)
+
+        # Cargar las opciones en los combobox
+        self.cargar_dias_en_cobox()
+        self.cargar_horas_en_cobox()
         
-    def cargar_curso_seleccionado(self):
-        """Carga la información del curso seleccionado"""
+        self.protocol("WM_DELETE_WINDOW", self.cancelar_registro)
+
+    def cargar_dias_en_cobox(self):
+        """Carga los días de la semana en el combobox de días"""
+        self.cobox_dia.configure(values=self.dias)
+        self.cobox_dia.set(self.dias[0])
+
+    def cargar_horas_en_cobox(self):
+        """Carga las horas en los combobox de hora inicio y fin"""
+        self.cobox_hora_inicio.configure(values=self.horas)
+        self.cobox_hora_inicio.set(self.horas[0])
+        
+        self.cobox_hora_fin.configure(values=self.horas)
+        self.cobox_hora_fin.set(self.horas[1])
+
+    def obtener_informacion_formulario_registro(self):
+        """
+            Obtiene la información ingresada en el formulario
+            Retorna:
+            - dia_semana: Día de la semana seleccionado
+            - hora_inicio: Hora de inicio seleccionada
+            - hora_fin: Hora de fin seleccionada
+        """
+        dia_semana = self.cobox_dia.get()
+        hora_inicio = self.cobox_hora_inicio.get()
+        hora_fin = self.cobox_hora_fin.get()
+        
+        return dia_semana, hora_inicio, hora_fin
+
+    def guardar_registro(self):
+        """
+            Registra un nuevo horario para el curso seleccionado
+        """
+        # Obtener la información del formulario
+        dia_semana, hora_inicio, hora_fin = self.obtener_informacion_formulario_registro()
+
         try:
-            print(f"Intentando cargar curso con ID: {self.curso_seleccionado_id}")
-            curso = self.controlador_curso.obtener_curso_por_id(self.curso_seleccionado_id)
-            print(f"Resultado de obtener_curso_por_id: {curso}")
-            
-            if curso:
-                texto_curso = f"ID: {curso.id_curso} - {curso.nombre}"
-                print(f"Configurando label con texto: {texto_curso}")
-                self.label_curso.configure(text=texto_curso)
-            else:
-                raise ValueError(f"No se encontró el curso con ID {self.curso_seleccionado_id}")
-        except Exception as e:
-            print(f"Error al cargar el curso: {str(e)}")
-            messagebox.showerror("Error", f"Error al cargar el curso: {str(e)}")
-            self.parent.ventana_registrar_horario_esta_abierta = False
-            self.destroy()
-            
-    def registrar_horario(self):
-        """Registra el horario en la base de datos"""
-        try:
-            # Obtener y validar datos
-            dia = self.dia.get()
-            hora_inicio = self.hora_inicio.get().strip()
-            hora_fin = self.hora_fin.get().strip()
-            
-            # Validar campos requeridos
-            if not dia:
-                messagebox.showwarning("Advertencia", "Debe seleccionar un día")
-                return
-                
-            if not hora_inicio or not hora_fin:
-                messagebox.showwarning("Advertencia", "Debe ingresar hora de inicio y fin")
-                return
-                
-            # Validar formato de horas
-            if not self.validar_hora(hora_inicio) or not self.validar_hora(hora_fin):
-                messagebox.showwarning("Advertencia", "El formato de hora debe ser HH:MM (ejemplo: 09:00)")
-                return
-                
-            # Registrar el horario
-            self.controlador_horario.registrar_horario(
-                curso_id=self.curso_seleccionado_id,
-                dia_semana=dia,
+            # Utilizar el controlador de horario para registrar un nuevo horario
+            self.parent.controlador_horario.registrar_horario(
+                curso_id=self.curso_id,
+                dia_semana=dia_semana,
                 hora_inicio=hora_inicio,
                 hora_fin=hora_fin
             )
             
-            messagebox.showinfo("Éxito", "Horario registrado exitosamente")
+            # Mostrar un mensaje de registro exitoso
+            msg_registro_exitoso("horario")
             
-            # Actualizar la tabla de cursos en la ventana principal
+            # Actualizar la tabla de cursos
             cursos = self.parent.obtener_lista_cursos()
-            self.parent.frame_tabla_cursos.imprimir_informacion_en_tabla(cursos)
+            if cursos:
+                self.parent.frame_tabla_cursos.imprimir_informacion_en_tabla(cursos)
+            else:
+                msg_error_inesperado("Error al actualizar la tabla de cursos")
             
             # Cerrar la ventana
-            self.parent.ventana_registrar_horario_esta_abierta = False
-            self.destroy()
+            self.cancelar_registro()
             
+        except IntegrityError as e:
+            if "Duplicate entry" in str(e):
+                msg_entrada_duplicada("horario")
+            else:
+                msg_error_integrity()
         except Exception as e:
-            messagebox.showerror("Error", f"Error al registrar horario: {str(e)}")
-            
+            if "Conflicto de horarios" in str(e):
+                msg_conflicto_horas()
+            else:
+                msg_error_inesperado(str(e))
+
     def cancelar_registro(self):
-        """Cierra la ventana sin guardar cambios"""
+        """
+            Cierra la ventana y actualiza el estado
+        """
         self.parent.ventana_registrar_horario_esta_abierta = False
-        self.destroy()
-        
-    def validar_hora(self, hora_str):
-        """Valida que el formato de hora sea correcto (HH:MM)"""
-        try:
-            if not hora_str or ":" not in hora_str:
-                return False
-            horas, minutos = map(int, hora_str.split(":"))
-            return 0 <= horas <= 23 and 0 <= minutos <= 59
-        except:
-            return False 
+        self.destroy() 

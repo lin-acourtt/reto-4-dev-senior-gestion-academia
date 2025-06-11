@@ -71,6 +71,10 @@ class FrameTablaCursos(CTkFrame):
             Método que recibe una lista de cursos (objetos), e imprime sus atributos en el TreeView
             - cursos: list[curso]
         """
+        # Limpiar la tabla antes de insertar nuevos datos
+        for item in self.tabla_cursos.get_children():
+            self.tabla_cursos.delete(item)
+
         # Llenar el Treeview con esta información
         for cur in cursos:
             try:
