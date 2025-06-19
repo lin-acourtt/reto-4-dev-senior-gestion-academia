@@ -60,10 +60,10 @@ class VentanaCrearCurso(ctk.CTk):
         row_number += 1
         # Botón de guardado    
         self.btn_guardar = ctk.CTkButton(self)
-        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=(15,30))
         # Botón de cancelar    
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=15)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=(15,30))
 
         # self.detalles_profesor
         # contiene los items por separado
@@ -102,8 +102,11 @@ class VentanaCrearCurso(ctk.CTk):
             self.cargar_profesores_en_cobox()
             # Botón de guardado    
             self.btn_guardar.configure(text="Actualizar", command=self.actualizar_registro)
-            self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
+            self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=(15,15))
         
+        for i in range(row_number):
+            self.rowconfigure(i,weight=1)
+
         self.protocol("WM_DELETE_WINDOW", self.cancelar_registro)
 
     def guardar_registro(self):
@@ -131,6 +134,12 @@ class VentanaCrearCurso(ctk.CTk):
             # Validar campos
             if not all([nombre, descripcion, duracion, profesor_id]):
                 msg_error_campos_vacios()
+                return
+            
+            try:
+                duracion = int(duracion)
+            except:
+                msg_error_inesperado("La duración debe ser un número")
                 return
             
             # Utilizar el controlador de curso para registrar un nuevo curso
@@ -183,7 +192,7 @@ class VentanaCrearCurso(ctk.CTk):
             # Ventana de actualización de curso
 
             # El detalle del profesor seleccionado, ya viene de la función self.actualizar_informacion_campos()
-            self.cobox_profesor.set(self.profesor_concat_sel)
+            self.cobox_profesor.set(self.profesor_concat_sel_id)
 
     
     def actualizar_informacion_campos(self):
@@ -193,18 +202,18 @@ class VentanaCrearCurso(ctk.CTk):
         """
         self.obtener_valores_de_seleccion()
         # Resultado, actualización de los atributos
-        # - self.iid_sel
-        # - self.nombre_sel
-        # - self.apellido_sel
-        # - self.correo_sel
-        # - self.telefono_sel
+        # self.iid_sel -> id del curso
+        # self.nombre_sel 
+        # self.descripcion_sel
+        # self.duracion_sel 
+        # self.profesor_concat_sel -> Nombre del profesor tal cual como aparece en la tabla, por eso se llama "concat"
 
         self.actualizar_strvars()
         # Resultado, actualización de los atributos
-        # - self.strvar_nombre
-        # - self.strvar_apellido
-        # - self.strvar_correo
-        # - self.strvar_tel
+        # self.strvar_nombre.set(self.nombre_sel)
+        # self.strvar_descripcion.set(self.descripcion_sel)
+        # self.strvar_duracion.set(self.duracion_sel)        
+        # self.cobox_profesor.set(self.profesor_concat_sel)
 
     def obtener_valores_de_seleccion(self):
         """
@@ -224,8 +233,18 @@ class VentanaCrearCurso(ctk.CTk):
         """
         self.strvar_nombre.set(self.nombre_sel)
         self.strvar_descripcion.set(self.descripcion_sel)
-        self.strvar_duracion.set(self.duracion_sel)        
-        self.cobox_profesor.set(self.profesor_concat_sel)
+        self.strvar_duracion.set(self.duracion_sel)
+
+        # En este caso, se va a buscar el INDEX del profesor en la lista de profesores, se usará en combinación:
+        # - self.detalles_profesor: lista con IDs y nombres [[id1,nombre1,apellido1],[id2,nombre2,apellido2],etc]
+        # - self.lista_profesores: lista con IDs y nombres concatenados ['ID: 1 - Nombre1 Apellido1','ID: 2 - Nombre2 Apellido2',etc]
+        idx = 0
+        for prof in self.detalles_profesor:
+            if self.profesor_concat_sel == f"{prof[1]} {prof[2]}":
+                break
+            idx += 1
+        self.profesor_concat_sel_id = self.lista_profesores[idx]
+        self.cobox_profesor.set(self.profesor_concat_sel_id)
     
     def actualizar_registro(self):
         """
@@ -236,14 +255,20 @@ class VentanaCrearCurso(ctk.CTk):
             nombre = self.entry_nombre.get().strip()
             descripcion = self.entry_descripcion.get().strip()
             duracion = self.entry_duracion.get().strip()
-            profesor_concat = self.cobox_profesor.get().strip()
+            profesor_concat_id = self.cobox_profesor.get().strip()
 
             # Validar campos
-            if not all([nombre, descripcion, duracion, profesor_concat]):
+            if not all([nombre, descripcion, duracion, profesor_concat_id]):
                 msg_error_campos_vacios()
                 return
             
-            if (str(nombre)==str(self.nombre_sel)) and (str(descripcion) == str(self.descripcion_sel)) and (str(duracion) == str(self.duracion_sel)) and (str(profesor_concat) == str(self.profesor_concat_sel)):
+            try:
+                duracion = int(duracion)
+            except:
+                msg_error_inesperado("La duración debe ser un número")
+                return
+            
+            if (str(nombre)==str(self.nombre_sel)) and (str(descripcion) == str(self.descripcion_sel)) and (str(duracion) == str(self.duracion_sel)) and (str(profesor_concat_id) == str(self.profesor_concat_sel_id)):
                 # Se regresa y no se hace ningún cambio
                 self.cancelar_registro()
                 return
@@ -251,7 +276,7 @@ class VentanaCrearCurso(ctk.CTk):
             # Antes de proceder a guardar, se busca el ID del profesor, ya que se obtuvo fue la concatenación de sus datos
             index_profesor = 0
             for string_profesor in self.lista_profesores:
-                if profesor_concat == string_profesor:
+                if profesor_concat_id == string_profesor:
                     break
                 index_profesor +=1
 

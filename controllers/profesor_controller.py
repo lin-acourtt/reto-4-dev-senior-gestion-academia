@@ -3,6 +3,16 @@ from models.Profesor import Profesor
 from models.Curso import Curso
 
 class ProfesorController:
+    """
+        Controlador para realizar operaciones con la tabla de profesores. 
+        - Métodos:
+            - registrar_profesor -> Registra un solo profesor
+            - listar_profesores -> Obtiene una lista de todos los profesores
+            - obtener_profesor_por_id -> Obtiene detalles de profesor por su ID.
+            - actualizar_profesor_por_id -> Actualiza todos los atributos de un profesor.
+            - eliminar_profesor_por_id -> Elimina un profesor por su ID.
+            - obtener_cursos_profesor -> Obtiene todos los cursos asociados a un profesor.
+    """
 
     # The controller will require a DB object
     def __init__(self, db):

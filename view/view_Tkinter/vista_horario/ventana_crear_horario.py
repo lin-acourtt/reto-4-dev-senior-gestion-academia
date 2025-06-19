@@ -40,9 +40,7 @@ class VentanaCrearHorario(ctk.CTk):
         row_number += 1
         self.label_curso = ctk.CTkLabel(self, text="Curso:")
         self.label_curso.grid(row = row_number, column= 0, padx=(10,10), pady=(5,5))
-        self.cobox_curso = ctk.CTkComboBox(self)
-        self.cobox_curso.grid(row = row_number, column= 1, padx=(10,30), pady=(5,5), sticky='ew')
-        self.cobox_curso.configure(state='readonly')
+        # Se tendrá un combobox si se está creando un nuevo curso, o un label si se va a editar
         
         # Día de semana
         row_number += 1
@@ -71,11 +69,13 @@ class VentanaCrearHorario(ctk.CTk):
         row_number += 1
         # Botón de guardado    
         self.btn_guardar = ctk.CTkButton(self)
-        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=(15,30))
         # Botón de cancelar    
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=15)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=(15,30))
 
+        for i in range(row_number):
+            self.rowconfigure(i,weight=1)
         # self.detalles_curso
         # contiene los items por separado
         # self.lista_cursos
@@ -86,7 +86,12 @@ class VentanaCrearHorario(ctk.CTk):
             # Si es una ventana de creación de nuevo horario, se configuran los siguientes parámetros
             self.title("Crear nuevo horario")
             self.label_titulo.configure(text="Crear nuevo horario")
-            self.cargar_cursos_en_cobox()
+            
+            self.cobox_curso = ctk.CTkComboBox(self)
+            self.cobox_curso.grid(row = 1, column= 1, padx=(10,30), pady=(5,5), sticky='ew')
+            self.cobox_curso.configure(state='readonly')
+            
+            self.cargar_cursos()
             self.cargar_dias_en_cobox()
             self.cargar_horas_en_cobox()
             # Botón de guardado    
@@ -96,10 +101,13 @@ class VentanaCrearHorario(ctk.CTk):
             self.title("Editar horario")
             self.label_titulo.configure(text="Actualización de horario")
 
+            self.label_curso = ctk.CTkLabel(self)
+            self.label_curso.grid(row = 1, column= 1, padx=(10,30), pady=(5,5), sticky='ew')            
+
             self.actualizar_informacion_campos()
 
             # Actualizar los campos de las entries, con la información del horario seleccionado
-            self.cargar_cursos_en_cobox()
+            self.cargar_cursos()
             self.cargar_dias_en_cobox()
             self.cargar_horas_en_cobox()
 
@@ -113,7 +121,7 @@ class VentanaCrearHorario(ctk.CTk):
         """
             Obtiene 3 listas de cursos y los guarda como atributos:
             - self.cursos: lista de objetos
-            - self.detalles_cursos: lista con IDs y nombres [[id1,nombre1,curso1],[id2,curso2],etc]
+            - self.detalles_cursos: lista con IDs y nombres [[id1,curso1],[id2,curso2],etc]
             - self.lista_cursos: lista con IDs y nombres concatenados ['ID: 1 - Curso1','ID: 2 - Curso2',etc]
         """
         try:
@@ -124,20 +132,16 @@ class VentanaCrearHorario(ctk.CTk):
         except Exception as e:
             msg_error_cargar_datos("curso",str(e))
 
-    def cargar_cursos_en_cobox(self):
+    def cargar_cursos(self):
         """
             Se usa con ambas ventanas, guardar y actualizar
             Carga la lista de cursos en el combobox pertinente
         """
-        self.cobox_curso.configure(values=self.lista_cursos)
+        
         if self.tipo == 1:
+            self.cobox_curso.configure(values=self.lista_cursos)
             # Ventana de creación de horario
             self.cobox_curso.set(self.lista_cursos[0])
-        if self.tipo == 2:
-            # Ventana de actualización de horario
-
-            # El detalle del profesor seleccionado, ya viene de la función self.actualizar_informacion_campos()
-            self.cobox_curso.set(self.curso_sel)
     
     def cargar_dias_en_cobox(self):
         """
@@ -199,13 +203,37 @@ class VentanaCrearHorario(ctk.CTk):
         self.dia_sel = self.parent.frame_tabla_horarios.tabla_horarios.item(self.iid_sel)['values'][2]
         self.hora_inicio_sel = self.parent.frame_tabla_horarios.tabla_horarios.item(self.iid_sel)['values'][3]
         self.hora_fin_sel = self.parent.frame_tabla_horarios.tabla_horarios.item(self.iid_sel)['values'][4]
-    
+
+        # Se eliminan los dos últimos caracteres
+        self.hora_inicio_sel = self.hora_inicio_sel[:-3]
+        self.hora_fin_sel = self.hora_fin_sel[:-3]
+
+        # Agregar 0 al comienzo si es encesario
+        if len(self.hora_inicio_sel) < 5:
+            self.hora_inicio_sel = f'0{self.hora_inicio_sel}'
+
+        if len(self.hora_fin_sel) < 5:
+            self.hora_fin_sel = f'0{self.hora_fin_sel}'
+
+
     def actualizar_strvars(self):
         """
             Se usa con ventana: editar horario
             Actualiza los valores de los StringVars que llenan los campos de texto con la información del estudiante.
         """
-        self.cobox_curso.set(self.curso_sel)
+        if hasattr(self, 'cobox_curso'):
+            self.cobox_curso.set(self.curso_sel)
+        if hasattr(self, 'label_curso'):
+
+            # Buscar el ID del curso seleccionado
+            # Se busca cuál es el ID del curso que corresponde al nombre seleccionado
+            index_curso = 0
+            for string_curso in self.detalles_cursos:
+                if self.curso_sel == string_curso[1]:
+                    break
+                index_curso +=1
+            self.label_curso.configure(text=self.lista_cursos[index_curso])
+
         self.cobox_dia.set(self.dia_sel)
         self.cobox_hora_inicio.set(self.hora_inicio_sel)
         self.cobox_hora_fin.set(self.hora_fin_sel)
@@ -216,7 +244,10 @@ class VentanaCrearHorario(ctk.CTk):
         """
         try: 
             # Obtener los datos en los elementos de "Entry"
-            curso_nombre = self.cobox_curso.get().strip()
+            if self.tipo == 1:
+                curso_nombre = self.cobox_curso.get().strip()
+            if self.tipo == 2:
+                curso_nombre = self.label_curso.cget('text')
             dia_semana = self.cobox_dia.get().strip()
             hora_inicio = self.cobox_hora_inicio.get().strip()
             hora_fin = self.cobox_hora_fin.get().strip()
@@ -286,7 +317,7 @@ class VentanaCrearHorario(ctk.CTk):
         idx_curso = lista_idx_cursos.index(curso_id)
         curso_nombre = self.lista_cursos[idx_curso]
 
-        if (str(curso_nombre)==str(self.curso_sel)) and (str(dia_semana) == str(self.dia_sel)) and (str(hora_inicio) == str(self.hora_inicio_sel)) and (str(hora_fin) == str(self.hora_fin_sel)):
+        if (str(dia_semana) == str(self.dia_sel)) and (str(hora_inicio) == str(self.hora_inicio_sel)) and (str(hora_fin) == str(self.hora_fin_sel)):
             # Se regresa y no se hace ningún cambio
             self.cancelar_registro()
             return

@@ -17,5 +17,5 @@ class FrameFooter(CTkFrame):
             width=200,
             height=40,
             corner_radius=10
-        ).pack(padx=10, expand=True)
+        ).pack(padx=10, pady=10, expand=True)
         #).grid(row=0,column=0, padx=5, pady=5)

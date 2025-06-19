@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from customtkinter import CTkFrame
-from .frame_botones import FrameBotones
 
 class FrameContenido(CTkFrame):
     def __init__(self, master, botones):

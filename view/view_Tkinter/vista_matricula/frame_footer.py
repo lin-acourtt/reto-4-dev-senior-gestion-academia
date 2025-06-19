@@ -13,7 +13,7 @@ class FrameFooter(CTkFrame):
         # Se utilizará para cambiar el estado de los botones
         self.botones_activos = False
 
-        self.btn_nuevo_matricula = ctk.CTkButton(self, text="➕ Nuevo Matricula", command= self.master.abrir_ventana_nuevo_matricula)
+        self.btn_nuevo_matricula = ctk.CTkButton(self, text="➕ Nueva Matricula", command= self.master.abrir_ventana_nuevo_matricula)
         self.btn_actualizar_matricula = ctk.CTkButton(self, text="✏️ Editar",state=DISABLED, command= self.master.abrir_ventana_actualizacion)
         self.btn_eliminar_matricula = ctk.CTkButton(self, text="🗑️ Eliminar",state=DISABLED, command= self.master.abrir_ventana_borrar)
         self.btn_buscar_matricula = ctk.CTkButton(self, text="🔍 Buscar",command=self.master.abrir_ventana_buscar)
@@ -26,6 +26,11 @@ class FrameFooter(CTkFrame):
         self.btn_buscar_matricula.grid(row=0,column=3, padx=5, pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=5, padx=5, pady=5)
+
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
 
     def actualizar_estado_de_botones(self):
         """Actualiza el estado de los botones a continuación cuando hay un elemento en la tabla seleccionado"""

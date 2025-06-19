@@ -33,7 +33,11 @@ class FrameFooter(CTkFrame):
         self.btn_estudiantes_inscritos.grid(row=1, column=2, padx=5, pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
-
+        for i in range(5):
+            self.columnconfigure(i,weight=1)
+        
+        for i in range(1):
+            self.rowconfigure(i,weight=1)
         # Configurar el evento de selección en la tabla
         self.master.frame_tabla_cursos.tabla_cursos.bind('<<TreeviewSelect>>', lambda e: self.actualizar_estado_de_botones())
 

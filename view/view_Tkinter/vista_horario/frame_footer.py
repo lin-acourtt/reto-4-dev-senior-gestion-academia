@@ -23,9 +23,14 @@ class FrameFooter(CTkFrame):
         self.btn_nuevo_horario.grid(row=0,column=0, padx=5, pady=5)
         self.btn_actualizar_horario.grid(row=0,column=1, padx=5, pady=5)
         self.btn_eliminar_horario.grid(row=0,column=2, padx=5, pady=5)
-        self.btn_buscar_horario.grid(row=0,column=3, padx=5, pady=5)
+        self.btn_buscar_horario.grid(row=0,column=3, padx=(5,10), pady=5)
         #self.btn_ver_matriculas_estudiante.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
+        
+        self.columnconfigure(0,weight=1)
+        self.columnconfigure(1,weight=1)
+        self.columnconfigure(2,weight=1)
+        self.columnconfigure(3,weight=1)
 
     def actualizar_estado_de_botones(self):
         """Actualiza el estado de los botones a continuación cuando hay un elemento en la tabla seleccionado"""

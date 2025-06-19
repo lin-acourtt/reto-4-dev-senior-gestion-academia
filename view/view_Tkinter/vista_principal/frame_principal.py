@@ -23,7 +23,6 @@ class FramePrincipal(CTkFrame):
             ("📚 Cursos", "Gestionar cursos", master_frame_principal.abrir_ventana_cursos),
             ("⏰ Horarios", "Gestionar horarios", master_frame_principal.abrir_ventana_horarios),
             ("📝 Matrículas", "Gestionar matrículas", master_frame_principal.abrir_ventana_matriculas),
-            # ("📊 Estadísticas", "Ver estadísticas", self.mostrar_estadisticas)
         ]
         
         self.frame_contenido = FrameContenido(self, botones)

@@ -10,13 +10,7 @@ from controllers.curso_controller import CursoController
 from .frame_header import FrameHeader
 from .frame_tabla_horarios import FrameTablaHorarios
 from .frame_footer import FrameFooter
-"""from .vista_crear_horario import VistaCrearhorario
-from .vista_listar_horarios import VistaListarhorarios
-from .vista_matricular_estudiante import VistaMatricularEstudiante
-from .vista_consultar_matriculas import VistaConsultarMatriculas
-from .vista_consultar_horarios import VistaConsultarHorarios
-from .vista_eliminar_matricula import VistaEliminarMatricula
-"""
+
 from .ventana_crear_horario import VentanaCrearHorario
 from .ventana_borrar_horario import VentanaBorrarHorario
 from .ventana_buscar_horario import VentanaBuscarHorario
@@ -51,7 +45,7 @@ class VentanaMenuHorario(ctk.CTkToplevel):
         centrar_ventana(self, proporcion=0.7)
         
         # Configuración de restricciones de la ventana
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         # Crear el frame Header - Contiene título y botones de cambiar tema y regresar a la ventana principal
         self.frame_header = FrameHeader(self)
@@ -63,7 +57,7 @@ class VentanaMenuHorario(ctk.CTkToplevel):
 
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
-        self.frame_footer.pack(padx=20, pady=10)
+        self.frame_footer.pack(fill="x",padx=20, pady=10)
         
         # Ejecuta la función "regresar_menu_principal", para poder regresar en caso de que se cierre la ventana con el botón cerrar
         self.protocol("WM_DELETE_WINDOW",self.regresar_menu_principal)
@@ -211,8 +205,10 @@ class VentanaMenuHorario(ctk.CTkToplevel):
             self.ventana_borrar = VentanaBorrarHorario(parent=self)
             self.ventana_borrar.mainloop()
         else:
-            # Si la ventana de borrar está abierta, hacerle focus
-            self.ventana_borrar.focus_force()  
+            # Cerrar la que ya está abierta, y volverla a abrir con los nuevos datos
+            self.ventana_borrar.destroy()
+            self.ventana_borrar = VentanaBorrarHorario(parent=self)
+            self.ventana_borrar.mainloop()
     
     def abrir_ventana_buscar(self):
         """

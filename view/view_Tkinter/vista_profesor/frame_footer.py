@@ -27,6 +27,9 @@ class FrameFooter(CTkFrame):
         self.btn_ver_cursos_profesor.grid(row=0,column=4, padx=5, pady=5)
         #self.btn_ver_horarios_estudiante.grid(row=0,column=5, padx=5, pady=5)
 
+        for i in range(5):
+            self.columnconfigure(i,weight=1)
+
     def actualizar_estado_de_botones(self):
         """Actualiza el estado de los botones a continuación cuando hay un elemento en la tabla seleccionado"""
         if self.botones_activos == False:

@@ -11,27 +11,30 @@ class VentanaRegistrarEstudiante(ctk.CTk):
         super().__init__()
         self.parent = parent
         
-        centrar_ventana(self,0.27,0.3)
+        centrar_ventana(self,0.35,0.3)
         self.resizable(False, False)
         self.title("Registro de estudiantes")
 
-        self.columnconfigure(0,weight=1)
+        self.columnconfigure(0,weight=2)
         self.columnconfigure(1,weight=1)
+
+        for i in range(4):
+            self.rowconfigure(i,weight=1)
 
         self.label_titulo = ctk.CTkLabel(self, text="Registro de estudiantes",font=("Helvetica", 14, "bold"))
         self.label_titulo.grid(row = 0, column = 0, columnspan=2,pady=(10,10))
 
         self.entry_nombre = ctk.CTkEntry(self, placeholder_text="Nombre")
-        self.entry_nombre.grid(row = 1, column = 0, padx=20, pady=5)
+        self.entry_nombre.grid(row = 1, column = 0, padx=(30,10), pady=5, sticky='ew')
 
         self.entry_apellido = ctk.CTkEntry(self, placeholder_text="Apellido")
-        self.entry_apellido.grid(row = 2, column = 0, padx=20, pady=5)
+        self.entry_apellido.grid(row = 2, column = 0, padx=(30,10), pady=5, sticky='ew')
 
         self.entry_correo = ctk.CTkEntry(self, placeholder_text="Correo")
-        self.entry_correo.grid(row = 3, column = 0, padx=20, pady=5)
+        self.entry_correo.grid(row = 3, column = 0, padx=(30,10), pady=5, sticky='ew')
 
         self.entry_telefono = ctk.CTkEntry(self, placeholder_text="Teléfono")
-        self.entry_telefono.grid(row = 4, column = 0, padx=20, pady=5)
+        self.entry_telefono.grid(row = 4, column = 0, padx=(30,10), pady=(5,30), sticky='ew')
 
         self.btn_guardar = ctk.CTkButton(self, text="Guardar", command=self.guardar_registro)
         self.btn_guardar.grid(row = 2, column = 1, padx=(0,20))

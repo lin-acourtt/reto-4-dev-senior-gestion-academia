@@ -21,7 +21,7 @@ def msg_eliminacion_exitosa(tipo_entidad):
     """
     CTkMessagebox(
                 title= "Borrado",
-                message= f"{tipo_entidad} borrado con éxito",
+                message= f"{tipo_entidad.capitalize()} borrado con éxito",
                 icon= "check",
                 option_1="OK"
             )

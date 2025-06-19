@@ -75,8 +75,8 @@ class VentanaTablaResultados(ctk.CTkToplevel):
         self.columnconfigure(0,weight=1)
         # Frame Header - Contiene el título 
         self.frame_header = FrameHeader(self)
-        #self.frame_header.pack(fill="x", padx=20, pady=10)
-        self.frame_header.grid(row=0,column=0, padx=(10,10), sticky='we')
+        self.frame_header.pack(fill="x", padx=20, pady=10)
+        #self.frame_header.grid(row=0,column=0, padx=(10,10), sticky='we')
 
         # Elementos del Treeview
         self.columnas = columnas
@@ -85,13 +85,14 @@ class VentanaTablaResultados(ctk.CTkToplevel):
         self.resultados = resultados
 
         self.frame_tabla_resultados = FrameTablaResultados(self)
-        #self.frame_tabla_resultados.pack(fill="both", expand=True, padx=20, pady=10)
-        self.frame_tabla_resultados.grid(row=1,column=0, padx=(10,10), sticky='we')
+        self.frame_tabla_resultados.pack(fill='both', expand=True, padx=20)
+        #self.frame_tabla_resultados.pack(fill="both", padx=20, pady=10)
+        #self.frame_tabla_resultados.grid(row=1,column=0, padx=(10,10), sticky='we')
 
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
-        #self.frame_footer.pack(padx=20, pady=10)
-        self.frame_footer.grid(row=2,column=0, padx=(10,10), sticky='we')
+        self.frame_footer.pack(padx=20, pady=10)
+        #self.frame_footer.grid(row=2,column=0, padx=(10,10), sticky='we')
 
         self.protocol("WM_DELETE_WINDOW", parent.cerrar_resultados)
 

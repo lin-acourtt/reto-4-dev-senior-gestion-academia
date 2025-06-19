@@ -1,4 +1,14 @@
 class Matricula:
+    """
+        Constructor de la clase Matricula
+        Args:
+            id_matricula: Identificador único de la matrícula
+            estudiante_id: ID del estudiante matriculado
+            curso_id: ID del curso donde está matriculado el estudiante
+            fecha_matricula: Fecha de la matrícula
+            estudiante: Objeto estudiante
+            curso: Objeto curso
+        """
     
     def __init__(self, id_matricula, estudiante_id, curso_id, fecha_matricula):
         self.id_matricula = id_matricula
