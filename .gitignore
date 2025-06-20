@@ -1,4 +1,4 @@
 .env 
-text.py
+test.py
 *.pyc
-__pycache__/s
+__pycache__/
