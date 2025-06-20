@@ -12,11 +12,8 @@ from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
 from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
 from view.view_Tkinter.vista_horario.menu_horario import VentanaMenuHorario
 from view.view_Tkinter.vista_matricula.menu_matricula import VentanaMenuMatricula
-<<<<<<< HEAD
 #from view.view_Tkinter.vista_matricula.vista_menu_matricula import VistaMenuMatricula
 from view.view_Tkinter.vista_msgbox.msgbox_library import CTkMessagebox
-=======
->>>>>>> lindsey
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
@@ -118,16 +115,12 @@ class VentanaMenuPrincipal(ctk.CTk):
             Método para cerrar el programa de manera segura
         """
         try:
-<<<<<<< HEAD
             # Mensaje de confirmación antes de cerrar
             msg = CTkMessagebox(title="¿Salir?", message="¿Está seguro que desea cerrar la aplicación?", icon="question", option_1="Cancelar", option_2="No", option_3="Sí")
             response = msg.get()
             if response != "Sí":
                 return
             print("cerrando")
-=======
-            # Cerrar la conexión a la base de datos si existe
->>>>>>> lindsey
             self.quit()
             self.destroy()
             if self.db:
