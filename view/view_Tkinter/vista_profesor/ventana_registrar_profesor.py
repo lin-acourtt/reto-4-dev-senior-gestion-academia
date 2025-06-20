@@ -11,7 +11,7 @@ class VentanaRegistrarProfesor(ctk.CTk):
         super().__init__()
         self.parent = parent
         
-        centrar_ventana(self,0.35,0.4)
+        centrar_ventana(self,0.35,0.425)
         self.resizable(False, False)
         #self.resizable(False, False)
         self.title("Registro de profesores")
@@ -21,6 +21,12 @@ class VentanaRegistrarProfesor(ctk.CTk):
 
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
+        self.rowconfigure(5, weight=1)
         # Nombre
         self.label_nombre = ctk.CTkLabel(self, text="Nombre:")
         #self.label_nombre.pack()
@@ -69,7 +75,7 @@ class VentanaRegistrarProfesor(ctk.CTk):
             width=200
         )
         #self.btn_guardar.pack()
-        self.btn_guardar.grid(row = 6, column = 0, padx=(30,30), pady=(15,15))
+        self.btn_guardar.grid(row = 6, column = 0, padx=(30,30), pady=(15,25))
         #self.btn_guardar.pack(side="left", padx=10, expand=True)
         
         self.btn_cancelar = ctk.CTkButton(
@@ -81,7 +87,7 @@ class VentanaRegistrarProfesor(ctk.CTk):
             hover_color="darkgray"
         )
         #self.btn_guardar.pack()
-        self.btn_cancelar.grid(row = 6, column = 1, padx=(30,30), pady=(15,15)) 
+        self.btn_cancelar.grid(row = 6, column = 1, padx=(30,30), pady=(15,25)) 
         #self.btn_cancelar.pack(side="right", padx=10, expand=True)
 
         self.protocol("WM_DELETE_WINDOW", self.cancelar_registro)

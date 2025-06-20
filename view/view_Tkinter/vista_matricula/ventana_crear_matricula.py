@@ -21,7 +21,7 @@ class VentanaCrearMatricula(ctk.CTk):
         self.parent = parent
         self.tipo = tipo
         
-        centrar_ventana(self,0.35,0.3)
+        centrar_ventana(self,0.35,0.35)
         self.resizable(False, False)
         
         self.columnconfigure(0,weight=1)
@@ -63,7 +63,10 @@ class VentanaCrearMatricula(ctk.CTk):
         self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
         # Botón de cancelar    
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=15)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20),pady=(15,30))
+
+        for i in range(row_number):
+            self.rowconfigure(i,weight=1)
 
         # self.detalles_estudiantes
         # contiene los items por separado

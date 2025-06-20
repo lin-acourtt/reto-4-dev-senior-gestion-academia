@@ -87,13 +87,16 @@ class VentanaBuscarProfesor(ctk.CTk):
         row_number +=1
         self.label_especialidad = ctk.CTkLabel(self.ventana_resultados, text="Especialidad:")
         self.label_especialidad.grid(row = row_number, column = 0, padx=20, pady=5)
-        self.entry_especialidad = ctk.CTkLabel(self.ventana_resultados, text=profesor.telefono)
+        self.entry_especialidad = ctk.CTkLabel(self.ventana_resultados, text=profesor.especialidad)
         self.entry_especialidad.grid(row = row_number, column = 1, padx=20, pady=5)
 
         row_number +=1
         self.btn_ok = ctk.CTkButton(self.ventana_resultados, text="OK", command= self.cerrar_resultados)
-        self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=10)
-
+        self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=(10,20))
+        
+        for i in range(row_number):
+            self.ventana_resultados.rowconfigure(i,weight=1)
+        self.ventana_resultados.protocol("WM_DELETE_WINDOW", self.cerrar_resultados)
         self.ventana_resultados.mainloop()
 
     def cerrar_resultados(self):

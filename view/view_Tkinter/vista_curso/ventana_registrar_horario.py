@@ -5,7 +5,8 @@ from config.appearance import centrar_ventana
 from controllers.horario_controller import HorarioController
 from controllers.curso_controller import CursoController
 
-class VentanaRegistrarHorario(ctk.CTkToplevel):
+
+class VentanaRegistrarHorarioDesdeMenuCurso(ctk.CTkToplevel):
     """
         Inicializa la ventana para registrar horarios desde la ventana de cursos.
     """
@@ -17,22 +18,27 @@ class VentanaRegistrarHorario(ctk.CTkToplevel):
              '17:00','17:30','18:00','18:30','19:00','19:30',
              '20:00','20:30','21:00','21:30','22:00','22:30',]
     
-    def __init__(self, parent=None, db=None):
+    def __init__(self, parent=None):
         """
             Se debe definir el parent, que sería la ventana de "MenuCurso" y la base de datos
         """
         super().__init__()
         self.parent = parent
-        self.db = db
-        self.controlador_horario = HorarioController(self.db)
-        self.controlador_curso = CursoController(self.db)
-        
+
+        # El parent ya viene con los sgtes controladores, no es necesario volverlos a crear:
+        # El método constructor asegura que el atributo "db" sea de tipo "Database""
+        # self.parent.controlador_curso 
+        # self.parent.controlador_profesor
+        # self.parent.controlador_horario 
+        # self.parent.controlador_matricula
+
         # Obtener el curso seleccionado
         seleccion = self.parent.frame_tabla_cursos.tabla_cursos.selection()
         valores = self.parent.frame_tabla_cursos.tabla_cursos.item(seleccion[0])['values']
         self.curso_id = valores[0]
         self.curso_nombre = valores[1]  # El nombre del curso está en la segunda columna
         
+        self.title("Registro de un nuevo horario")
         centrar_ventana(self,0.4)
         self.resizable(False, False)
         
@@ -76,10 +82,13 @@ class VentanaRegistrarHorario(ctk.CTkToplevel):
         row_number += 1
         # Botón de guardado    
         self.btn_guardar = ctk.CTkButton(self, text="Guardar", command=self.guardar_registro)
-        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=15)
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(0,20), pady=(15,30))
         # Botón de cancelar    
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_registro)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20), pady=15)
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(0,20), pady=(15,30))
+
+        for i in range(row_number):
+            self.rowconfigure(i,weight=1)
 
         # Cargar las opciones en los combobox
         self.cargar_dias_en_cobox()
@@ -111,6 +120,13 @@ class VentanaRegistrarHorario(ctk.CTkToplevel):
         dia_semana = self.cobox_dia.get()
         hora_inicio = self.cobox_hora_inicio.get()
         hora_fin = self.cobox_hora_fin.get()
+
+        idx_hora_inicio = VentanaRegistrarHorarioDesdeMenuCurso.horas.index(hora_inicio)
+        idx_hora_fin = VentanaRegistrarHorarioDesdeMenuCurso.horas.index(hora_fin)
+
+        if idx_hora_fin <= idx_hora_inicio:
+            msg_conflicto_horas()
+            return
         
         return dia_semana, hora_inicio, hora_fin
 
@@ -158,5 +174,6 @@ class VentanaRegistrarHorario(ctk.CTkToplevel):
         """
             Cierra la ventana y actualiza el estado
         """
+        msg_sin_cambios()
         self.parent.ventana_registrar_horario_esta_abierta = False
         self.destroy() 

@@ -1,5 +1,4 @@
 .env 
-
+text.py
 *.pyc
 __pycache__/
-

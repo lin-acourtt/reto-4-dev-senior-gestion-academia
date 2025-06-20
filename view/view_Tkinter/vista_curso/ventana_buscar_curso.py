@@ -51,9 +51,11 @@ class VentanaBuscarCurso(ctk.CTk):
         curso = self.obtener_detalles_curso_por_id()
 
         self.ventana_resultados = ctk.CTk()
-        centrar_ventana(self.ventana_resultados,0.5,0.45)
-        self.ventana_resultados.columnconfigure(0,weight=1)
-        self.ventana_resultados.columnconfigure(1,weight=1)
+        centrar_ventana(self.ventana_resultados,0.35,0.45)
+        
+
+        # Ejecuta la función "cerrar_resultados", para poder regresar en caso de que se cierre la ventana con el botón cerrar
+        self.ventana_resultados.protocol("WM_DELETE_WINDOW",self.cerrar_resultados)
 
         self.ventana_resultados.title("Resultados de curso")
         row_number = 0
@@ -81,14 +83,18 @@ class VentanaBuscarCurso(ctk.CTk):
         row_number +=1
         self.label_horarios = ctk.CTkLabel(self.ventana_resultados, text="Horarios:")
         self.label_horarios.grid(row = row_number, column = 0, padx=20, pady=5)
-        self.entry_horarios = ctk.CTkLabel(self.ventana_resultados, text=curso.horarios)
-        self.entry_horarios.grid(row = row_number, column = 1, padx=20, pady=5)
+        #self.entry_horarios = ctk.CTkLabel(self.ventana_resultados, text=curso.horarios)
+        self.entry_horarios = ctk.CTkEntry(self.ventana_resultados)
+        self.entry_horarios.insert(0,curso.horarios)
+        self.entry_horarios.grid(row = row_number, column = 1, padx=20, pady=5, sticky='ew')
 
         row_number +=1
         self.label_descripcion = ctk.CTkLabel(self.ventana_resultados, text="Descripción:")
         self.label_descripcion.grid(row = row_number, column = 0, padx=20, pady=5)
-        self.entry_descripcion = ctk.CTkLabel(self.ventana_resultados, text=curso.descripcion)
-        self.entry_descripcion.grid(row = row_number, column = 1, padx=20, pady=5)
+        #self.entry_descripcion = ctk.CTkLabel(self.ventana_resultados, text=curso.descripcion)
+        self.entry_descripcion = ctk.CTkEntry(self.ventana_resultados)
+        self.entry_descripcion.insert(0,curso.descripcion)
+        self.entry_descripcion.grid(row = row_number, column = 1, padx=20, pady=5, sticky="ew")
 
         row_number +=1
         self.label_duracion = ctk.CTkLabel(self.ventana_resultados, text="Duración (horas):")
@@ -96,9 +102,17 @@ class VentanaBuscarCurso(ctk.CTk):
         self.entry_duracion = ctk.CTkLabel(self.ventana_resultados, text=curso.duracion_horas)
         self.entry_duracion.grid(row = row_number, column = 1, padx=20, pady=5)
 
+        invisible_label = ctk.CTkLabel(self.ventana_resultados, text="")
+        invisible_label.grid(row=row_number, column=2)
         row_number +=1
         self.btn_ok = ctk.CTkButton(self.ventana_resultados, text="OK", command=self.cerrar_resultados)
-        self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=10)
+        self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=(10,30))
+        
+        for i in range(row_number):
+            self.ventana_resultados.rowconfigure(i,weight=1)
+        
+        self.ventana_resultados.columnconfigure(0,weight=1)
+        self.ventana_resultados.columnconfigure(1,weight=2)
 
         self.ventana_resultados.mainloop()
 

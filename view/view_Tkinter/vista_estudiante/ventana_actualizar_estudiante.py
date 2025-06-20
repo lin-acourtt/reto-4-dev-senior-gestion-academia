@@ -13,7 +13,7 @@ class VentanaActualizarEstudiante(ctk.CTk):
         
         row_number = 0
 
-        centrar_ventana(self,0.25,0.35)
+        centrar_ventana(self,0.35,0.35)
         self.resizable(False, False)
         self.title("Actualizar estudiante")
         self.label_titulo = ctk.CTkLabel(self, text="Actualización de estudiante",font=("Helvetica", 14, "bold"))
@@ -21,6 +21,13 @@ class VentanaActualizarEstudiante(ctk.CTk):
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
+
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
+        self.rowconfigure(5, weight=1)
 
         self.strvar_nombre = ctk.StringVar(self,"")
         self.strvar_apellido = ctk.StringVar(self,"")
@@ -56,10 +63,10 @@ class VentanaActualizarEstudiante(ctk.CTk):
 
         row_number +=1
         self.btn_guardar = ctk.CTkButton(self, text="Actualizar", command=lambda: self.guardar_registro(self.iid_sel))
-        self.btn_guardar.grid(row = row_number, column = 0, padx=(30,30), pady=(15,15))
+        self.btn_guardar.grid(row = row_number, column = 0, padx=(30,30), pady=(15,30))
         
         self.btn_cancelar = ctk.CTkButton(self, text="Cancelar", command=self.cancelar_actualizacion)
-        self.btn_cancelar.grid(row = row_number, column = 1, padx=(30,30), pady=(15,15))
+        self.btn_cancelar.grid(row = row_number, column = 1, padx=(30,30), pady=(15,30))
 
         self.protocol("WM_DELETE_WINDOW", self.cancelar_actualizacion)
 

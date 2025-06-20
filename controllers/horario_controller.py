@@ -3,6 +3,16 @@ from models.Horario import Horario
 from models.Curso import Curso
 
 class HorarioController:
+    """
+        Controlador para realizar operaciones con la tabla de horarios. 
+        - Métodos:
+            - registrar_horario -> Registra un solo horario
+            - listar_horarios -> Obtiene una lista de todos los horarios
+            - obtener_horario_por_id -> Obtiene detalles de horario por su ID.
+            - actualizar_horario_por_id -> Actualiza todos los atributos de un horario.
+            - eliminar_horario_por_id -> Elimina un horario por su ID.
+            - obtener_horarios_por_curso -> Obtiene los horarios asociados al ID de curso que se le especifique.
+    """
 
     # The controller will require a DB object
     def __init__(self, db):

@@ -3,6 +3,15 @@ from config.database import Database
 from models.Estudiante import Estudiante
 
 class EstudianteController:
+    """
+        Controlador para realizar operaciones con la tabla de estudiantes. 
+        - Métodos:
+            - registrar_estudiante -> Registra un solo estudiante
+            - listar_estudiantes -> Obtiene una lista de todos los estudiantes
+            - obtener_estudiante_por_id -> Obtiene detalles de estudiante por su ID.
+            - actualizar_estudiante_por_id -> Actualiza todos los atributos de un estudiante.
+            - eliminar_estudiante_por_id -> Elimina un estudiante por su ID.
+    """
 
     # The controller will require a DB object
     def __init__(self, db):

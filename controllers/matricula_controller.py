@@ -4,7 +4,18 @@ from models.Estudiante import Estudiante
 from models.Curso import Curso
 
 class MatriculaController:
-
+    """
+        Controlador para realizar operaciones con la tabla de matriculas. 
+        - Métodos:
+            - registrar_matricula -> Registra una solo matricula
+            - listar_matriculas -> Obtiene una lista de todas los matriculas
+            - obtener_matricula_por_id -> Obtiene detalles de matricula por su ID.
+            - actualizar_matricula_por_id -> Actualiza todos los atributos de una matricula.
+            - eliminar_matricula_por_id -> Elimina una matricula por su ID.
+            - obtener_cursos_por_estudiante -> Obtiene los cursos del ID del estudiante que se especifique.
+            - buscar_matriculas -> Obtiene cursos dependiendo del filtro especificado. 
+            - obtener_estudiantes_por_curso -> Obtiene los estudiantes asociados a un curso.
+    """
     # The controller will require a DB object
     def __init__(self, db):
         self.db = db

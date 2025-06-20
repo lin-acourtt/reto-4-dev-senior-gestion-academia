@@ -18,7 +18,6 @@ from .ventana_actualizar_estudiante import VentanaActualizarEstudiante
 from .ventana_borrar_estudiante import VentanaBorrarEstudiante
 from .ventana_buscar_estudiante import VentanaBuscarEstudiante
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta, msg_error_inesperado
-from .ventana_consultar_cursos_estudiante import VistaConsultarCursosEstudiante
 from view.view_Tkinter.vista_tablas_resultados.ventana_tabla_resultados import VentanaTablaResultados
 
 class VentanaMenuEstudiante(ctk.CTkToplevel):
@@ -46,7 +45,7 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         centrar_ventana(self, proporcion=0.7)
         
         # Configuración de restricciones de la ventana
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         # Crear el frame Header - Contiene título y botones de cambiar tema y regresar a la ventana principal
         self.frame_header = FrameHeader(self)
@@ -58,8 +57,7 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
-        self.frame_footer.pack(padx=20, pady=10)
-        #self.frame_footer.pack(fill="both", expand=True, padx=20, pady=10)
+        self.frame_footer.pack(fill='x', padx=20, pady=10)
         
         # Ejecuta la función "regresar_menu_principal", para poder regresar en caso de que se cierre la ventana con el botón cerrar
         self.protocol("WM_DELETE_WINDOW",self.regresar_menu_principal)
@@ -158,8 +156,10 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
             self.ventana_borrar = VentanaBorrarEstudiante(parent=self)
             self.ventana_borrar.mainloop()
         else:
-            # Si la ventana de borrar está abierta, hacerle focus
-            self.ventana_borrar.focus_force()  
+            # Cerrar la que ya está abierta, y volverla a abrir con los nuevos datos
+            self.ventana_borrar.destroy()
+            self.ventana_borrar = VentanaBorrarEstudiante(parent=self)
+            self.ventana_borrar.mainloop()
 
     def abrir_ventana_buscar(self):
         """
@@ -199,70 +199,6 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
         app = VentanaMenuPrincipal(db=self.db)
         # Iniciar el bucle principal de la aplicación
         app.iniciar_ventana()
-
-    def abrir_consultar_cursos(self):
-        """Abre la ventana para consultar los cursos del estudiante seleccionado"""
-        # Verificar si hay un estudiante seleccionado
-        seleccion = self.frame_tabla_estudiantes.tabla_estudiantes.selection()
-        if not seleccion:
-            msg_no_hay_seleccion("estudiante", "consultar cursos")
-            return
-            
-        # Obtener el ID y nombre del estudiante seleccionado
-        valores = self.frame_tabla_estudiantes.tabla_estudiantes.item(seleccion[0])['values']
-        estudiante_id = valores[0]
-        nombre_estudiante = f"{valores[1]} {valores[2]}"
-        
-        # Verificar si la ventana anterior aún existe
-        if hasattr(self, 'ventana_consultar_cursos_actual'):
-            try:
-                # Intentar hacer focus a la ventana existente
-                self.ventana_consultar_cursos_actual.focus_force()
-                return
-            except:
-                # Si falla, significa que la ventana ya no existe
-                self.ventana_consultar_cursos_esta_abierta = False
-                if hasattr(self, 'ventana_consultar_cursos_actual'):
-                    delattr(self, 'ventana_consultar_cursos_actual')
-        
-        # Si no hay ventana abierta o la anterior ya no existe, crear una nueva
-        if not self.ventana_consultar_cursos_esta_abierta:
-            # Crear nueva ventana
-            self.ventana_consultar_cursos_esta_abierta = True
-            ventana = ctk.CTkToplevel(self)
-            ventana.title("Consultar Cursos del Estudiante")
-            ventana.geometry("1000x600")
-            ventana.transient(self)
-            ventana.grab_set()
-            centrar_ventana(ventana)
-            
-            # Crear la vista
-            vista = VistaConsultarCursosEstudiante(
-                root=ventana,
-                db=self.db,
-                estudiante_id=estudiante_id,
-                nombre_estudiante=nombre_estudiante
-            )
-            
-            # Configurar el tema
-            ctk.set_appearance_mode(self.tema_actual)
-            
-            # Configurar el protocolo de cierre
-            ventana.protocol("WM_DELETE_WINDOW", lambda: self.cerrar_ventana_consultar_cursos(ventana))
-            
-            # Mantener referencia a la ventana actual
-            self.ventana_consultar_cursos_actual = ventana
-            
-    def cerrar_ventana_consultar_cursos(self, ventana):
-        """Cierra la ventana de consultar cursos y actualiza el estado"""
-        try:
-            ventana.destroy()
-        except:
-            pass
-        finally:
-            self.ventana_consultar_cursos_esta_abierta = False
-            if hasattr(self, 'ventana_consultar_cursos_actual'):
-                delattr(self, 'ventana_consultar_cursos_actual')
 
     def obtener_datos_seleccion(self, seleccion):
         """
@@ -355,7 +291,7 @@ class VentanaMenuEstudiante(ctk.CTkToplevel):
                     delattr(self, 'ventana_consultar_cursos_actual')
         
         # Si no hay ventana abierta o la anterior ya no existe, crear una nueva
-        if not self.ventana_consultar_cursos_actual:
+        if not hasattr(self, 'ventana_consultar_cursos_actual'):
         
             columnas = ("id", "curso", "profesor", "descripcion", "duracion", "horarios")
             nombre_columnas = ("ID", "Curso", "Profesor", "Descripción","Duración (hrs)","Horarios")

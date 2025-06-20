@@ -16,7 +16,6 @@ from .ventana_registrar_profesor import VentanaRegistrarProfesor
 from .ventana_actualizar_profesor import VentanaActualizarProfesor
 from .ventana_borrar_profesor import VentanaBorrarProfesor
 from .ventana_buscar_profesor import VentanaBuscarProfesor
-from .ventana_cursos_profesor import VentanaCursosProfesor
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta, msg_error_inesperado
 
 from view.view_Tkinter.vista_tablas_resultados.ventana_tabla_resultados import VentanaTablaResultados
@@ -46,7 +45,7 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         centrar_ventana(self, proporcion=0.7)
         
         # Configuración de restricciones de la ventana
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         # Crear el frame Header - Contiene título y botones de cambiar tema y regresar a la ventana principal
         self.frame_header = FrameHeader(self)
@@ -58,7 +57,7 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
-        self.frame_footer.pack(padx=20, pady=10)
+        self.frame_footer.pack(fill='x', padx=20, pady=10)
         
         # Ejecuta la función "regresar_menu_principal", para poder regresar en caso de que se cierre la ventana con el botón cerrar
         self.protocol("WM_DELETE_WINDOW",self.regresar_menu_principal)
@@ -157,8 +156,10 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
             self.ventana_borrar = VentanaBorrarProfesor(parent=self)
             self.ventana_borrar.mainloop()
         else:
-            # Si la ventana de borrar está abierta, hacerle focus
-            self.ventana_borrar.focus_force()  
+            # Cerrar la que ya está abierta, y volverla a abrir con los nuevos datos
+            self.ventana_borrar.destroy()
+            self.ventana_borrar = VentanaBorrarProfesor(parent=self)
+            self.ventana_borrar.mainloop()
 
     def abrir_ventana_buscar(self):
         """
@@ -171,28 +172,6 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
             # Si la ventana de búsqueda está abierta, hacerle focus
             msg_hay_otra_ventana_abierta("resultados")
     
-    def abrir_ventana_cursos_profesor(self):
-        """
-            Abrir la ventana que muestra los cursos asociados a un profesor
-        """
-        #v1
-        # Si no hay nada seleccionado, se indica que se debe seleccionar un item primero
-        seleccion = self.frame_tabla_profesores.tabla_profesores.selection()
-        if not seleccion:
-            msg_no_hay_seleccion("profesor","ver sus cursos")
-            #messagebox.showwarning("Advertencia", "Por favor, seleccione un profesor para actualizar")
-            return
-        
-        if self.ventana_cursos_esta_abierta == False:
-            # Si la ventana de actualización está cerrada, cambiar su atributo a "True" y abrir la ventana
-            self.ventana_cursos_esta_abierta = True
-            # Abrir la ventana
-            self.ventana_cursos = VentanaCursosProfesor(parent=self)
-            self.ventana_cursos.mainloop()
-        else:
-            # Si la ventana de cursos está abierta, hacerle focus 
-            self.ventana_cursos.focus_force()  
-
     def cambiar_tema(self):
         """
             Método para cambiar el estilo de la ventana
@@ -282,7 +261,7 @@ class VentanaMenuProfesor(ctk.CTkToplevel):
         cursos = self.obtener_datos_de_los_cursos(profesor_id)
 
         if not cursos:
-            msg_error_inesperado("Este profesor no tiene ningún curso asociado.")
+            msg_error_inesperado("Este profesor no tiene ningún curso asociado")
             if hasattr(self, 'ventana_consultar_cursos_actual'):
                 self.ventana_consultar_cursos_actual.destroy()
             return

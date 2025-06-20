@@ -9,7 +9,7 @@ def centrar_ventana(ventana: ctk.CTk, proporcion=0.8, *args):
         Opciones de parámetros:
         - (a) -> solo proporcion horizontal
         - (proporcion=a) -> solo proporcion horizontal
-        - (a,b) -> a: propo horiztonal, b: proporcion vertical
+        - (a,b) -> a: proporción horiztonal, b: proporcion vertical
     """
 
     # Obtener el ancho y alto de la pantalla

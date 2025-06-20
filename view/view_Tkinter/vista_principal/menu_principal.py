@@ -1,15 +1,6 @@
 import sys
 import customtkinter as ctk
-from PIL import Image, ImageTk
-import os
-import sys
-# from view.view_Tkinter.viewEstudiante.menuEstudiante import MenuEstudiante
-# from view.view_Tkinter.viewDocenteFull.menuDocenteFull import MenuDocenteFull
-from controllers.estudiante_controller import EstudianteController
-from controllers.profesor_controller import ProfesorController
-from controllers.curso_controller import CursoController
-from controllers.horario_controller import HorarioController
-from controllers.matricula_controller import MatriculaController
+#from PIL import Image, ImageTk
 
 from config.database import Database
 from config.appearance import centrar_ventana
@@ -21,13 +12,19 @@ from view.view_Tkinter.vista_profesor.menu_profesor import VentanaMenuProfesor
 from view.view_Tkinter.vista_curso.menu_curso import VentanaMenuCurso
 from view.view_Tkinter.vista_horario.menu_horario import VentanaMenuHorario
 from view.view_Tkinter.vista_matricula.menu_matricula import VentanaMenuMatricula
+<<<<<<< HEAD
 #from view.view_Tkinter.vista_matricula.vista_menu_matricula import VistaMenuMatricula
 from view.view_Tkinter.vista_msgbox.msgbox_library import CTkMessagebox
+=======
+>>>>>>> lindsey
 
 # Crear la clase de la ventana principial
 # desde la cual se podrá hacer la gestión académica 
 
 class VentanaMenuPrincipal(ctk.CTk):
+    """
+        Ventana CTk con el menú principal para acceder a los submenús. 
+    """
 
     def __init__(self, db: Database = None):
         """
@@ -55,6 +52,9 @@ class VentanaMenuPrincipal(ctk.CTk):
         # Crear el frame principal - Contiene FrameSuperior y FrameContenido
         self.frame_principal = FramePrincipal(self)
         self.frame_principal.pack(fill="both", expand=True, padx=20, pady=20)
+
+        # Ejecuta la función "salir_programa", para cerrar la aplicación de modo seguro
+        self.protocol("WM_DELETE_WINDOW",self.salir_programa)
 
         self.mainloop()
 
@@ -100,7 +100,6 @@ class VentanaMenuPrincipal(ctk.CTk):
 
         #VistaMenuMatricula(self, self.db, self.tema_actual)
         
-    
     def cambiar_tema(self):
         """
             Método para cambiar el estilo de la ventana
@@ -119,12 +118,16 @@ class VentanaMenuPrincipal(ctk.CTk):
             Método para cerrar el programa de manera segura
         """
         try:
+<<<<<<< HEAD
             # Mensaje de confirmación antes de cerrar
             msg = CTkMessagebox(title="¿Salir?", message="¿Está seguro que desea cerrar la aplicación?", icon="question", option_1="Cancelar", option_2="No", option_3="Sí")
             response = msg.get()
             if response != "Sí":
                 return
             print("cerrando")
+=======
+            # Cerrar la conexión a la base de datos si existe
+>>>>>>> lindsey
             self.quit()
             self.destroy()
             if self.db:
@@ -132,7 +135,7 @@ class VentanaMenuPrincipal(ctk.CTk):
             # Destruir la ventana principal
             sys.exit(0)
         except Exception as e:
-            print(f"Error al cerrar el programa: {e}")
+            #print(f"Error al cerrar el programa: {e}")
             # Forzar el cierre si hay algún error
             self.quit()
             sys.exit(1)

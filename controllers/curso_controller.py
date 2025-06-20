@@ -2,6 +2,15 @@
 from models.Curso import Curso
 
 class CursoController:
+    """
+        Controlador para realizar operaciones con la tabla de cursos. 
+        - Métodos:
+            - registrar_curso -> Registra un solo curso
+            - listar_cursos -> Obtiene una lista de todos los cursos
+            - obtener_curso_por_id -> Obtiene detalles de curso por su ID.
+            - actualizar_curso -> Actualiza todos los atributos de un curso.
+            - eliminar_curso -> Elimina un curso por su ID.
+    """
 
     # The controller will require a DB object
     def __init__(self, db):
@@ -142,7 +151,7 @@ class CursoController:
                 UPDATE cursos 
                 SET nombre = %s, 
                     profesor_id = %s, 
-                    descripcion = %s, 
+                    descripcion= %s, 
                     duracion_horas = %s 
                 WHERE id_curso = %s
             """

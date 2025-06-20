@@ -11,18 +11,11 @@ from controllers.matricula_controller import MatriculaController
 from .frame_header import FrameHeader
 from .frame_tabla_cursos import FrameTablaCursos
 from .frame_footer import FrameFooter
-from .vista_crear_curso import VistaCrearCurso
-from .vista_listar_cursos import VistaListarCursos
-from .vista_matricular_estudiante import VistaMatricularEstudiante
-from .vista_consultar_matriculas import VistaConsultarMatriculas
-from .vista_consultar_horarios import VistaConsultarHorarios
-from .vista_eliminar_matricula import VistaEliminarMatricula
-from .vista_consultar_estudiantes_curso import VistaConsultarEstudiantesCurso
 
 from .ventana_crear_curso import VentanaCrearCurso
 from .ventana_borrar_curso import VentanaBorrarCurso
 from .ventana_buscar_curso import VentanaBuscarCurso
-from .ventana_registrar_horario import VentanaRegistrarHorario
+from .ventana_registrar_horario import VentanaRegistrarHorarioDesdeMenuCurso
 from view.view_Tkinter.vista_tablas_resultados.ventana_tabla_resultados import VentanaTablaResultados
 
 from view.view_Tkinter.vista_msgbox.msgbox_library import msg_no_hay_seleccion, msg_hay_otra_ventana_abierta, msg_error_inesperado
@@ -55,7 +48,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         centrar_ventana(self, proporcion=0.7)
         
         # Configuración de restricciones de la ventana
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         # Crear el frame Header - Contiene título y botones de cambiar tema y regresar a la ventana principal
         self.frame_header = FrameHeader(self)
@@ -67,7 +60,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
 
         # Crear el frame para el Footer - Contiene los botones de acción
         self.frame_footer = FrameFooter(self)
-        self.frame_footer.pack(padx=20, pady=10)
+        self.frame_footer.pack(fill='x', padx=20, pady=10)
         
         # Ejecuta la función "regresar_menu_principal", para poder regresar en caso de que se cierre la ventana con el botón cerrar
         self.protocol("WM_DELETE_WINDOW",self.regresar_menu_principal)
@@ -217,8 +210,10 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             self.ventana_borrar = VentanaBorrarCurso(parent=self)
             self.ventana_borrar.mainloop()
         else:
-            # Si la ventana de borrar está abierta, hacerle focus
-            self.ventana_borrar.focus_force()  
+            # Cerrar la que ya está abierta, y volverla a abrir con los nuevos datos
+            self.ventana_borrar.destroy()
+            self.ventana_borrar = VentanaBorrarCurso(parent=self)
+            self.ventana_borrar.mainloop()
 
     def abrir_ventana_buscar(self):
         """
@@ -232,43 +227,6 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         else:
             # Si la ventana de búsqueda está abierta, hacerle focus
             msg_hay_otra_ventana_abierta("resultados")
-
-    def abrir_ventana_secundaria(self, titulo, clase_vista):
-        # Queda pendiente
-        """Abre una ventana secundaria y la configura para que aparezca por encima"""
-        ventana = ctk.CTkToplevel(self)
-        ventana.title(titulo)
-        ventana.geometry("600x500")
-        ventana.transient(self)  # Hace que la ventana sea transitoria de la principal
-        ventana.grab_set()  # Hace que la ventana sea modal
-        centrar_ventana(ventana)
-        
-        # Crear instancia de la vista pasando la ventana y la conexión a la base de datos
-        vista = clase_vista(ventana, self.db)
-        
-        # Configurar el tema
-        ctk.set_appearance_mode(self.tema_actual)
-        
-        return vista
-            
-    def abrir_matricular_estudiante(self):
-        # Queda pendiente
-        """Abre la ventana para matricular un estudiante en un curso"""
-        self.abrir_ventana_secundaria("Matricular Estudiante", VistaMatricularEstudiante)
-        
-    def abrir_consultar_matriculas(self):
-        # Queda pendiente
-        """Abre la ventana para consultar las matrículas"""
-        self.abrir_ventana_secundaria("Consultar Matrículas", VistaConsultarMatriculas)
-        
-    def abrir_consultar_horarios(self):
-        """Abre la ventana para consultar los horarios de todos los cursos"""
-        self.abrir_ventana_secundaria("Consultar Horarios", VistaConsultarHorarios)
-
-    def abrir_eliminar_matricula(self):
-        # Queda pendiente
-        """Abre la ventana para eliminar una matrícula"""
-        self.abrir_ventana_secundaria("Eliminar Matrícula", VistaEliminarMatricula)
 
     def abrir_ventana_registrar_horario(self):
         """
@@ -284,43 +242,11 @@ class VentanaMenuCurso(ctk.CTkToplevel):
             # Si la ventana de registro de horario está cerrada, cambiar su atributo a "True" y abrir la ventana
             self.ventana_registrar_horario_esta_abierta = True
             # Abrir la ventana
-            self.ventana_registrar_horario = VentanaRegistrarHorario(parent=self, db=self.db)
+            self.ventana_registrar_horario = VentanaRegistrarHorarioDesdeMenuCurso(parent=self)
             self.ventana_registrar_horario.mainloop()
         else:
             # Si la ventana de registro está abierta, hacerle focus
             self.ventana_registrar_horario.focus_force()
-
-    def abrir_consultar_estudiantes_curso(self):
-        """Abre la ventana para consultar los estudiantes inscritos en un curso"""
-        # Verificar si hay un curso seleccionado
-        seleccion = self.frame_tabla_cursos.tabla_cursos.selection()
-        if not seleccion:
-            msg_no_hay_seleccion("curso", "consultar estudiantes")
-            return
-            
-        # Obtener el ID y nombre del curso seleccionado
-        valores = self.frame_tabla_cursos.tabla_cursos.item(seleccion[0])['values']
-        curso_id = valores[0]
-        nombre_curso = valores[1]
-        
-        # Debug: Imprimir información del curso seleccionado
-        print(f"Curso seleccionado - ID: {curso_id}, Nombre: {nombre_curso}")
-        
-        # Crear y mostrar la ventana
-        ventana = ctk.CTkToplevel(self)
-        ventana.transient(self)
-        ventana.grab_set()
-        
-        # Crear la vista
-        vista = VistaConsultarEstudiantesCurso(
-            root=ventana,
-            db=self.db,
-            curso_id=curso_id,
-            nombre_curso=nombre_curso
-        )
-        
-        # Configurar el tema
-        ctk.set_appearance_mode(self.tema_actual)
 
     def cambiar_tema(self):
         """
@@ -449,7 +375,7 @@ class VentanaMenuCurso(ctk.CTkToplevel):
         else:
         
             columnas = ("id", "profesor", "dia", "hora_inicio", "hora_fin")
-            nombre_columnas = ("ID Horario", "Profesor", "Día", "Profesor","Hora de inicio","Hora de fin")
+            nombre_columnas = ("ID Horario", "Profesor", "Día","Hora de inicio","Hora de fin")
             ancho_columnas = (100, 200, 150, 150, 150)
 
             # Crear nueva ventana

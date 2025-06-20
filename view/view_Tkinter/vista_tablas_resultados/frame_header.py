@@ -16,4 +16,4 @@ class FrameHeader(CTkFrame):
             text=f"{self.master_header.elemento_tabla_pl.capitalize()} de {self.master_header.elemento_owner}: {self.master_header.nombre_elemento_owner}",
             font=("Helvetica", 18, "bold")
         )
-        self.label_titulo.pack(pady=20)
+        self.label_titulo.pack(pady=5)
