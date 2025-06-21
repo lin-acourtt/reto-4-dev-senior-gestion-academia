@@ -157,7 +157,7 @@ class VentanaRegistrarHorarioDesdeMenuCurso(ctk.CTkToplevel):
                 msg_error_inesperado("Error al actualizar la tabla de cursos")
             
             # Cerrar la ventana
-            self.cancelar_registro()
+            self.cerrar_registro()
             
         except IntegrityError as e:
             if "Duplicate entry" in str(e):
@@ -170,6 +170,13 @@ class VentanaRegistrarHorarioDesdeMenuCurso(ctk.CTkToplevel):
             else:
                 msg_error_inesperado(str(e))
 
+    def cerrar_registro(self):
+        """
+            Cierra la ventana y actualiza el estado
+        """
+        self.parent.ventana_registrar_horario_esta_abierta = False
+        self.destroy() 
+    
     def cancelar_registro(self):
         """
             Cierra la ventana y actualiza el estado

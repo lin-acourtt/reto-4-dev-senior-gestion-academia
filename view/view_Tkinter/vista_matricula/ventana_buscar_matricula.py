@@ -76,7 +76,7 @@ class VentanaBuscarMatricula(ctk.CTk):
         self.entry_curso.grid(row = row_number, column = 1, padx=20, pady=5)
 
         row_number +=1
-        self.label_fecha = ctk.CTkLabel(self.ventana_resultados, text="FEcha:")
+        self.label_fecha = ctk.CTkLabel(self.ventana_resultados, text="Fecha:")
         self.label_fecha.grid(row = row_number, column = 0, padx=20, pady=5)
         self.entry_fecha = ctk.CTkLabel(self.ventana_resultados, text=fecha)
         self.entry_fecha.grid(row = row_number, column = 1, padx=20, pady=5)
@@ -86,7 +86,7 @@ class VentanaBuscarMatricula(ctk.CTk):
         self.btn_ok.grid(row = row_number, column = 0, columnspan=2, padx=20, pady=(10,20))
 
         for i in range(row_number):
-            self.rowconfigure(i,weight=1)
+            self.ventana_resultados.rowconfigure(i,weight=1)
 
         # Ejecuta la función "cerrar_resultados", para poder regresar en caso de que se cierre la ventana con el botón cerrar
         self.ventana_resultados.protocol("WM_DELETE_WINDOW",self.cerrar_resultados)

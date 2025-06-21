@@ -21,7 +21,7 @@ class HorarioController:
     def registrar_horario(self,curso_id,dia_semana,hora_inicio,hora_fin):
         
         sql = """
-            INSERT INTO horarios (curso_id,dia_semana,hora_inicio,hora_fin)
+            INSERT INTO Horarios (curso_id,dia_semana,hora_inicio,hora_fin)
             VALUES (%s,%s,%s,%s);
         """
         params=(curso_id,dia_semana,hora_inicio,hora_fin)
@@ -31,9 +31,9 @@ class HorarioController:
         # sql = "SELECT * FROM horarios"
         # sql = "SELECT id_horario, nombre, descripcion, duracion_horas, profesor_id FROM horarios"
         sql = """
-            SELECT horarios.id_horario, horarios.curso_id, horarios.dia_semana, horarios.hora_inicio, horarios.hora_fin, 
-            cursos.nombre FROM horarios 
-            JOIN cursos on (horarios.curso_id = cursos.id_curso);
+            SELECT Horarios.id_horario, Horarios.curso_id, Horarios.dia_semana, Horarios.hora_inicio, Horarios.hora_fin, 
+            Cursos.nombre FROM Horarios 
+            JOIN Cursos on (Horarios.curso_id = Cursos.id_curso);
         """
         resultados = self.db.execute_select(sql)
         nombre_cursos = [detalles_horario[5] for detalles_horario in resultados] # Es nombre del curso de este horario
@@ -44,9 +44,9 @@ class HorarioController:
             Retorna el objeto del horario con el ID especificado
         """
         sql = """
-            SELECT horarios.id_horario, horarios.curso_id, horarios.dia_semana, horarios.hora_inicio, horarios.hora_fin, 
-            cursos.nombre FROM horarios 
-            JOIN cursos on (horarios.curso_id = cursos.id_curso)
+            SELECT Horarios.id_horario, Horarios.curso_id, Horarios.dia_semana, Horarios.hora_inicio, Horarios.hora_fin, 
+            Cursos.nombre FROM Horarios 
+            JOIN Cursos on (Horarios.curso_id = Cursos.id_curso)
             WHERE id_horario = %s
         """
         params = (id_horario,)
@@ -59,7 +59,7 @@ class HorarioController:
             Actualiza todos los parámetros de un horario por su ID
         """
         sql = """
-            UPDATE horarios SET curso_id=%s, dia_semana=%s, hora_inicio=%s, hora_fin=%s 
+            UPDATE Horarios SET curso_id=%s, dia_semana=%s, hora_inicio=%s, hora_fin=%s 
             WHERE id_horario= %s
         """
         params = (curso_id,dia_semana,hora_inicio,hora_fin,id_horario)
@@ -70,7 +70,7 @@ class HorarioController:
             Elimina un horario dando un ID
         """
         sql = """
-            DELETE FROM horarios WHERE id_horario= %s
+            DELETE FROM Horarios WHERE id_horario= %s
         """
         params = (id_horario,)
         resultado = self.db.execute_query(sql, params)
@@ -89,9 +89,9 @@ class HorarioController:
             sql = """
                 SELECT h.id_horario, h.curso_id, h.dia_semana, h.hora_inicio, h.hora_fin,
                        c.nombre as nombre_curso, c.profesor_id, CONCAT(p.nombre,' ',p.apellido) as nombre_profesor, c.descripcion, c.duracion_horas
-                FROM horarios h
-                JOIN cursos c ON h.curso_id = c.id_curso
-                JOIN profesores p ON c.profesor_id = p.id_profesor
+                FROM Horarios h
+                JOIN Cursos c ON h.curso_id = c.id_curso
+                JOIN Profesores p ON c.profesor_id = p.id_profesor
                 WHERE h.curso_id = %s
                 ORDER BY 
                     CASE h.dia_semana

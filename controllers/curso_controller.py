@@ -34,7 +34,7 @@ class CursoController:
         """
         try:
             sql = """
-                INSERT INTO cursos (nombre,descripcion,duracion_horas,profesor_id)
+                INSERT INTO Cursos (nombre,descripcion,duracion_horas,profesor_id)
                 VALUES (%s,%s,%s,%s);
             """
             params=(nombre,descripcion,duracion_horas,id_profesor)
@@ -61,10 +61,10 @@ class CursoController:
                     GROUP_CONCAT(DISTINCT CONCAT(h.dia_semana, ' ', TIME_FORMAT(h.hora_inicio, '%H:%i'), '-', TIME_FORMAT(h.hora_fin, '%H:%i')) SEPARATOR ', ') as horarios,
                     c.descripcion,
                     c.duracion_horas
-                FROM cursos c
-                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
-                LEFT JOIN matriculas m ON c.id_curso = m.curso_id
-                LEFT JOIN horarios h ON c.id_curso = h.curso_id
+                FROM Cursos c
+                LEFT JOIN Profesores p ON c.profesor_id = p.id_profesor
+                LEFT JOIN Matriculas m ON c.id_curso = m.curso_id
+                LEFT JOIN Horarios h ON c.id_curso = h.curso_id
                 GROUP BY c.id_curso, c.nombre, profesor, c.descripcion, c.duracion_horas
                 ORDER BY c.id_curso
             """
@@ -109,10 +109,10 @@ class CursoController:
                     GROUP_CONCAT(DISTINCT CONCAT(h.dia_semana, ' ', TIME_FORMAT(h.hora_inicio, '%H:%i'), '-', TIME_FORMAT(h.hora_fin, '%H:%i')) SEPARATOR ', ') as horarios,
                     c.descripcion,
                     c.duracion_horas
-                FROM cursos c
-                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
-                LEFT JOIN matriculas m ON c.id_curso = m.curso_id
-                LEFT JOIN horarios h ON c.id_curso = h.curso_id
+                FROM Cursos c
+                LEFT JOIN Profesores p ON c.profesor_id = p.id_profesor
+                LEFT JOIN Matriculas m ON c.id_curso = m.curso_id
+                LEFT JOIN Horarios h ON c.id_curso = h.curso_id
                 WHERE c.id_curso = %s
                 GROUP BY c.id_curso, c.nombre, profesor, c.descripcion, c.duracion_horas
             """
@@ -148,7 +148,7 @@ class CursoController:
         """
         try:
             query = """
-                UPDATE cursos 
+                UPDATE Cursos 
                 SET nombre = %s, 
                     profesor_id = %s, 
                     descripcion= %s, 
@@ -171,10 +171,10 @@ class CursoController:
         """
         try:
             # Primero eliminamos las matrículas y horarios asociados
-            self.db.execute_query("DELETE FROM matriculas WHERE curso_id = %s", (id_curso,))
-            self.db.execute_query("DELETE FROM horarios WHERE curso_id = %s", (id_curso,))
+            self.db.execute_query("DELETE FROM Matriculas WHERE curso_id = %s", (id_curso,))
+            self.db.execute_query("DELETE FROM Horarios WHERE curso_id = %s", (id_curso,))
             # Luego eliminamos el curso
-            self.db.execute_query("DELETE FROM cursos WHERE id_curso = %s", (id_curso,))
+            self.db.execute_query("DELETE FROM Cursos WHERE id_curso = %s", (id_curso,))
             return True
         except Exception as e:
             print(f"Error al eliminar curso: {str(e)}")

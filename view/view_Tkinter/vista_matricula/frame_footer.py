@@ -32,6 +32,8 @@ class FrameFooter(CTkFrame):
         self.columnconfigure(2, weight=1)
         self.columnconfigure(3, weight=1)
 
+        self.master.frame_tabla_matriculas.tabla_matriculas.bind('<<TreeviewSelect>>', lambda e: self.actualizar_estado_de_botones())
+
     def actualizar_estado_de_botones(self):
         """Actualiza el estado de los botones a continuación cuando hay un elemento en la tabla seleccionado"""
         if self.botones_activos == False:

@@ -120,7 +120,6 @@ class VentanaMenuPrincipal(ctk.CTk):
             response = msg.get()
             if response != "Sí":
                 return
-            print("cerrando")
             self.quit()
             self.destroy()
             if self.db:

@@ -23,7 +23,7 @@ class MatriculaController:
     def registrar_matricula(self,estudiante_id,curso_id,fecha_matricula):
         
         sql = """
-            INSERT INTO matriculas (estudiante_id,curso_id,fecha_matricula)
+            INSERT INTO Matriculas (estudiante_id,curso_id,fecha_matricula)
             VALUES (%s,%s,%s);
         """
         params=(estudiante_id,curso_id,fecha_matricula)
@@ -33,12 +33,12 @@ class MatriculaController:
         # sql = "SELECT * FROM matriculas"
         # sql = "SELECT id_matricula, nombre, descripcion, duracion_horas, profesor_id FROM matriculas"
         sql = """
-            SELECT matriculas.id_matricula, matriculas.estudiante_id, matriculas.curso_id, matriculas.fecha_matricula,
-            CONCAT(estudiantes.nombre,' ',estudiantes.apellido) AS nombre_estudiante,
-            cursos.nombre AS nombre_curso
-            FROM matriculas 
-            JOIN estudiantes on (matriculas.estudiante_id = estudiantes.id_estudiante)
-            JOIN cursos on (matriculas.curso_id = cursos.id_curso);
+            SELECT Matriculas.id_matricula, Matriculas.estudiante_id, Matriculas.curso_id, Matriculas.fecha_matricula,
+            CONCAT(Estudiantes.nombre,' ',Estudiantes.apellido) AS nombre_estudiante,
+            Cursos.nombre AS nombre_curso
+            FROM Matriculas 
+            JOIN Estudiantes on (Matriculas.estudiante_id = Estudiantes.id_estudiante)
+            JOIN Cursos on (Matriculas.curso_id = Cursos.id_curso);
         """
         resultados = self.db.execute_select(sql)
         nombre_estudiantes = [detalles_matricula[4] for detalles_matricula in resultados] # Es nombre del estudiante de esta matrícula
@@ -50,12 +50,12 @@ class MatriculaController:
             Retorna el objeto del matricula con el ID especificado
         """
         sql = """
-            SELECT matriculas.id_matricula, matriculas.estudiante_id, matriculas.curso_id, matriculas.fecha_matricula,
-            CONCAT(estudiantes.nombre,' ',estudiantes.apellido) AS nombre_estudiante,
-            cursos.nombre AS nombre_curso
-            FROM matriculas 
-            JOIN estudiantes on (matriculas.estudiante_id = estudiantes.id_estudiante)
-            JOIN cursos on (matriculas.curso_id = cursos.id_curso)
+            SELECT Matriculas.id_matricula, Matriculas.estudiante_id, Matriculas.curso_id, Matriculas.fecha_matricula,
+            CONCAT(Estudiantes.nombre,' ',Estudiantes.apellido) AS nombre_estudiante,
+            Cursos.nombre AS nombre_curso
+            FROM Matriculas 
+            JOIN Estudiantes on (Matriculas.estudiante_id = Estudiantes.id_estudiante)
+            JOIN Cursos on (Matriculas.curso_id = Cursos.id_curso)
             WHERE id_matricula = %s
         """
         params = (id_matricula,)
@@ -69,7 +69,7 @@ class MatriculaController:
             Actualiza todos los parámetros de un matricula por su ID
         """
         sql = """
-            UPDATE matriculas SET estudiante_id=%s, curso_id=%s, fecha_matricula=%s
+            UPDATE Matriculas SET estudiante_id=%s, curso_id=%s, fecha_matricula=%s
             WHERE id_matricula= %s
         """
         params = (estudiante_id,curso_id,fecha_matricula,id_matricula)
@@ -80,7 +80,7 @@ class MatriculaController:
             Elimina un matricula dando un ID
         """
         sql = """
-            DELETE FROM matriculas WHERE id_matricula= %s
+            DELETE FROM Matriculas WHERE id_matricula= %s
         """
         params = (id_matricula,)
         resultado = self.db.execute_query(sql, params)
@@ -108,10 +108,10 @@ class MatriculaController:
                         TIME_FORMAT(h.hora_inicio, '%H:%i'), '-', 
                         TIME_FORMAT(h.hora_fin, '%H:%i')
                     ) SEPARATOR ', ') as horarios
-                FROM matriculas m
-                JOIN cursos c ON m.curso_id = c.id_curso
-                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
-                LEFT JOIN horarios h ON c.id_curso = h.curso_id
+                FROM Matriculas m
+                JOIN Cursos c ON m.curso_id = c.id_curso
+                LEFT JOIN Profesores p ON c.profesor_id = p.id_profesor
+                LEFT JOIN Horarios h ON c.id_curso = h.curso_id
                 WHERE m.estudiante_id = %s
                 GROUP BY c.id_curso, c.nombre, profesor, c.descripcion, c.duracion_horas
                 ORDER BY c.nombre
@@ -162,10 +162,10 @@ class MatriculaController:
                     e.apellido as apellido_estudiante,
                     c.nombre as nombre_curso,
                     CONCAT(p.nombre, ' ', p.apellido) as profesor
-                FROM matriculas m
-                JOIN estudiantes e ON m.estudiante_id = e.id_estudiante
-                JOIN cursos c ON m.curso_id = c.id_curso
-                LEFT JOIN profesores p ON c.profesor_id = p.id_profesor
+                FROM Matriculas m
+                JOIN Estudiantes e ON m.estudiante_id = e.id_estudiante
+                JOIN Cursos c ON m.curso_id = c.id_curso
+                LEFT JOIN Profesores p ON c.profesor_id = p.id_profesor
                 WHERE 1=1
             """
             params = []
@@ -251,8 +251,8 @@ class MatriculaController:
                 m.estudiante_id, 
                 CONCAT(e.nombre, ' ', e.apellido) as nombre_estudiante, 
                 m.fecha_matricula 
-                FROM matriculas m
-                JOIN estudiantes e ON m.estudiante_id = e.id_estudiante
+                FROM Matriculas m
+                JOIN Estudiantes e ON m.estudiante_id = e.id_estudiante
                 WHERE m.curso_id=%s;
         """
         params = (id_curso,)
