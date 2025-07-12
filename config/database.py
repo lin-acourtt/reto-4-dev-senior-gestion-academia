@@ -1,14 +1,17 @@
-# mysql handling
+# Manejo de mysql 
 import mysql.connector
 from mysql.connector import Error
 from mysql.connector.errors import IntegrityError
 
-# this is to load de user data stored in the file ".env"
+# Cargar las variables de entorno
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 class Database:
+    """
+        Gestiona la conexión a la base de datos, así como las operaciones que se hacen con ella.
+    """
     # contructor, to open the connection to the DB
     def __init__(self):
         self.connection = mysql.connector.connect(
@@ -37,12 +40,13 @@ class Database:
         self._execute(query, params)
         self.connection.commit()
 
-    # public method to select row    
+    # public method to select multiple row    
     def execute_select(self, query, params=None):
         self._execute(query, params)
+        #self.connection.commit()
         return self.cursor.fetchall()
 
-    # public method to selece 1
+    # public method to select 1 row
     def fetchone(self, query, params=None):
         self._execute(query, params)
         return self.cursor.fetchone()
