@@ -15,11 +15,16 @@ class Database:
     # contructor, to open the connection to the DB
     def __init__(self):
         self.connection = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            port=os.getenv("DB_PORT"),
-            database=os.getenv("DB_NAME")
+            host=os.getenv("DB_HOST","metro.proxy.rlwy.net"),
+            user=os.getenv("DB_USER","root"),
+            password=os.getenv("DB_PASSWORD","FcMqjOguUYvGBXbPNZvUNgGcVdWBxdUc"),
+            port=os.getenv("DB_PORT","52204"),
+            database=os.getenv("DB_NAME","railway")
+            # host=os.getenv("DB_HOST"),
+            # user=os.getenv("DB_USER"),
+            # password=os.getenv("DB_PASSWORD"),
+            # port=os.getenv("DB_PORT"),
+            # database=os.getenv("DB_NAME")
         )
         self.cursor = self.connection.cursor()
 
