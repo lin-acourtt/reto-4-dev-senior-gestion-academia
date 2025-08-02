@@ -1,3 +1,19 @@
+
+# Capas del proyecto
+
+```
+reto-4-dev-senior-gestion-academica/
+├── config/
+│   └── db.js
+controllers/
+├── models/
+│   └── user.js
+queries/
+view/
+├── index.js
+|-- main.py
+```
+
 # Pendientes
 
 - Colocar un mensaje de confirmación antes de cerrar la aplicación
