@@ -1,4 +1,4 @@
-# Sistema de Gestión Académica
+# Sistema de Gestión Académica🧑‍🎓🧑‍🏫📚📑
 
 El presente repositorio corresponde a una aplicación de software que permite gestionar los procesos básicos de una academia, incluyendo el registro de estudiantes, profesores, cursos, horarios y matrículas. 
 
@@ -56,6 +56,37 @@ reto-4-dev-senior-gestion-academica/
 │         └── vista_tablas_resultados/
 ├── main.py
 ```
+
+## Descripción de la aplicación
+
+La aplicación consta de una ventana principal o menu principal para gestionar una academia. Esta ventana me puede redireccionar a otras 5 ventanas que son la de Cursos, Profesores, Horarios, Matriculas y Estudiantes. Estas ventanas tambien cuentan con el boton para cambiar de tema y regresar al menu principal 
+
+![](imgs/ventanaMenuPrincipal.png)
+
+Al dar click en el boton de "Estudiantes" se despliega la siguiete ventana con toda su funcionalidad para gestionar estudiantes:
+
+![](imgs/ventanaEstudiantes.png)
+
+El botón de "Profesores"  abrirá la ventana para gestionar profesores. 
+
+![](imgs/ventanaProfesores.png)
+
+Al dar click en el boton de "Cursos" se despliega la siguiete ventana con toda su funcionalidad para gestionar cursos:
+
+![](imgs/ventanaCursos.png)
+
+El botón de "Horarios"  abrirá una nueva ventana para gestionar horarios. 
+
+![](imgs/ventanaHorarios.png)
+
+El ultimo boton es el de Matriculas y al dar click en el nos llevara a la ventana para gestionar matriculas:
+![](imgs/ventanaMatriculas.png) 
+
+Por ultimo, nuestra app cuenta con un boton para cambiar el tema y otro para salir de la aplicacion, se mostrará un mensaje para confirmar que queremos salir y se cerrará nuestra aplicacion de.
+
+  
+
+
 # Instalador
 
 La carpeta instalador contiene el archivo ```mysetup.exe``` el cual permite la instalación de este código como una aplicación de escritorio en Windows. En este caso, la base de datos se almacena en la nube usando la plataforma Railway. 
@@ -71,25 +102,10 @@ sys
 
 # Vídeo
 
-https://www.youtube.com/watch?v=CkaNK7CJsyY
-
-# Pendientes
-
-- Colocar un mensaje de confirmación antes de cerrar la aplicación
-- Si no hay registro de estudiante/profesor/curso/horario/matricula, mostrar un mensaje de error, y no abrir la ventana de cada menú
+Dar clic a la imagen para ser redirigdo al vídeo en Youtube.
+[![](imgs/video.png)](https://www.youtube.com/watch?v=CkaNK7CJsyY)
 
 
-Tareas:
-| Completado | Tarea | Se hace en |
-| --- | --- | --- |
-| Sí | Registrar nuevos estudiantes | Estudiantes |
-| Sí | Consultar información de estudiantes | Estudiantes | 
-| Sí | Registrar profesores | Profesores | 
-| si| Ver qué cursos dicta un profesor |  Profesores  | 
-| Sí | Crear cursos y asignarles un profesor responsable. | Cursos |
-|si| Registrar uno o varios horarios para cada curso. |  Cursos y horarios  |
-| Sí | Matricular estudiantes en cursos específicos. |  Matrículas  | 
-| si | Consultar los cursos en los que está inscrito un estudiante. |  Estudiantes  |
-| Si | Consultar los estudiantes inscritos en un curso. |  Cursos  |
-| si| Consultar los horarios asignados a un curso. |  Cursos  |
-| Sí | Eliminar matrículas sin afectar la información de los estudiantes ni de los cursos. | Matrículas |
+### Versión de Python
+
+Desarrollado en Python 3.13.0.
