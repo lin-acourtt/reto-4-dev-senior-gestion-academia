@@ -59,7 +59,7 @@ reto-4-dev-senior-gestion-academica/
 
 ## Descripción de la aplicación
 
-La aplicación consta de una ventana principal o menu principal para gestionar una academia. Esta ventana me puede redireccionar a otras 5 ventanas que son la de Cursos, Profesores, Horarios, Matriculas y Estudiantes. Estas ventanas tambien cuentan con el boton para cambiar de tema y regresar al menu principal 
+La aplicación consta de una ventana principal o menu principal para gestionar una academia. Esta ventana me puede redireccionar a otras 5 ventanas que son la de Cursos, Profesores, Horarios, Matriculas y Estudiantes. Estas ventanas cuentan con el boton para cambiar de tema y regresar al menu principal 
 
 ![](imgs/ventanaMenuPrincipal.png)
 
@@ -82,9 +82,8 @@ El botón de "Horarios"  abrirá una nueva ventana para gestionar horarios.
 El ultimo boton es el de Matriculas y al dar click en el nos llevara a la ventana para gestionar matriculas:
 ![](imgs/ventanaMatriculas.png) 
 
-Por ultimo, nuestra app cuenta con un boton para cambiar el tema y otro para salir de la aplicacion, se mostrará un mensaje para confirmar que queremos salir y se cerrará nuestra aplicacion de.
+Por ultimo, nuestra app cuenta con un boton para cambiar el tema y otro para salir de la aplicacion, se mostrará un mensaje para confirmar que queremos salir y se cerrará nuestra aplicacion de Gestion de cursos para una academia.
 
-  
 
 
 # Instalador
