@@ -87,8 +87,12 @@ Por ultimo, nuestra app cuenta con un boton para cambiar el tema y otro para sal
 
 
 # Instalador
+Link de descarga
+[Instalador](https://laiberocol-my.sharepoint.com/:u:/g/personal/lacourtt_estudiante_ibero_edu_co/EYcQk8G_X89Ors70SO6_n1cB5Cqwczm68X8JXRUyyZk6Wg?e=7k8Y21)
 
-La carpeta instalador contiene el archivo ```mysetup.exe``` el cual permite la instalación de este código como una aplicación de escritorio en Windows. En este caso, la base de datos se almacena en la nube usando la plataforma Railway. 
+O tambien puedes buscarlo en la carpeta instalador que contiene el archivo ```mysetup.exe``` el cual permite la instalación de este código como una aplicación de escritorio en Windows. En este caso, la base de datos se almacena en la nube usando la plataforma Railway. 
+
+
 
 # Requerimientos
 tkinter
