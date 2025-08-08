@@ -95,13 +95,13 @@ O tambien puedes buscarlo en la carpeta instalador que contiene el archivo ```my
 
 
 # Requerimientos
-tkinter
-customtkinter
-mysql.connector
-CTkMessagebox
-tkcalendar
-datetime
-sys
+* tkinter
+* customtkinter
+* mysql.connector
+* CTkMessagebox
+* tkcalendar
+* datetime
+* sys
 
 # Vídeo
 
