@@ -57,9 +57,9 @@ reto-4-dev-senior-gestion-academica/
 ├── main.py
 ```
 
-## Descripción de la aplicación
+# Descripción de la aplicación
 
-La aplicación consta de una ventana principal o menu principal para gestionar una academia. Esta ventana me puede redireccionar a otras 5 ventanas que son la de Cursos, Profesores, Horarios, Matriculas y Estudiantes. Estas ventanas cuentan con el boton para cambiar de tema y regresar al menu principal 
+La aplicación consta de una ventana principal o menu principal para gestionar una academia. Esta ventana me puede redireccionar a otras 5 ventanas que son la de Cursos, Profesores, Horarios, Matriculas y Estudiantes. Estas ventanas cuentan con el boton para cambiar de tema y regresar al menu principal. 
 
 ![](imgs/ventanaMenuPrincipal.png)
 
@@ -67,7 +67,7 @@ Al dar click en el boton de "Estudiantes" se despliega la siguiete ventana con t
 
 ![](imgs/ventanaEstudiantes.png)
 
-El botón de "Profesores"  abrirá la ventana para gestionar profesores. 
+El botón de "Profesores"  abrirá la ventana para gestionar profesores:
 
 ![](imgs/ventanaProfesores.png)
 
@@ -75,7 +75,7 @@ Al dar click en el boton de "Cursos" se despliega la siguiete ventana con toda s
 
 ![](imgs/ventanaCursos.png)
 
-El botón de "Horarios"  abrirá una nueva ventana para gestionar horarios. 
+El botón de "Horarios"  abrirá una nueva ventana para gestionar horarios:
 
 ![](imgs/ventanaHorarios.png)
 
@@ -105,6 +105,6 @@ Dar clic a la imagen para ser redirigdo al vídeo en Youtube.
 [![](imgs/video.png)](https://www.youtube.com/watch?v=CkaNK7CJsyY)
 
 
-### Versión de Python
+# Versión de Python
 
 Desarrollado en Python 3.13.0.
